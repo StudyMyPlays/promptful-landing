@@ -194,6 +194,7 @@ export function Hero() {
 /** Optional Seedance ambient loop — only on larger screens with motion allowed. */
 function HeroVideo() {
   const [enabled, setEnabled] = useState(false)
+  const [playing, setPlaying] = useState(false)
   const ref = useRef<HTMLVideoElement>(null)
   useEffect(() => {
     if (!videos.heroLoop.ready) return
@@ -201,7 +202,8 @@ function HeroVideo() {
     const ok =
       window.matchMedia('(min-width: 768px)').matches &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
-      !conn?.saveData
+      !conn?.saveData &&
+      document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"') !== ''
     setEnabled(ok)
   }, [])
   useEffect(() => {
@@ -215,14 +217,16 @@ function HeroVideo() {
   return (
     <video
       ref={ref}
-      className="absolute inset-0 h-full w-full object-cover"
+      className="absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out"
+      style={{ opacity: playing ? 1 : 0 }}
       src={videos.heroLoop.src}
-      poster={videos.heroLoop.poster}
       muted
       playsInline
       loop
       preload="none"
       aria-hidden
+      onPlaying={() => setPlaying(true)}
+      onError={() => setEnabled(false)}
     />
   )
 }
