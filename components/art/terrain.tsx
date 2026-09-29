@@ -181,6 +181,7 @@ export function ArtSlot({
   priority,
   sizes = '100vw',
   objectPosition = 'center',
+  unoptimized,
 }: {
   asset: Asset
   fallback: React.ReactNode
@@ -188,6 +189,8 @@ export function ArtSlot({
   priority?: boolean
   sizes?: string
   objectPosition?: string
+  /** Serve the file as-is. Use for alpha-keyed cut-outs: re-encoding smears their edges. */
+  unoptimized?: boolean
 }) {
   if (!asset.ready) return <>{fallback}</>
   return (
@@ -198,6 +201,7 @@ export function ArtSlot({
       height={asset.height}
       priority={priority}
       sizes={sizes}
+      unoptimized={unoptimized}
       className={cn('h-full w-full object-cover', className)}
       style={{ objectPosition }}
     />
