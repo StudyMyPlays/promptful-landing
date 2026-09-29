@@ -4,7 +4,7 @@ import { motion, useMotionValueEvent, useScroll, useSpring, useTransform, type M
 import { Check, Copy, Link2 } from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Reveal, SplitReveal } from '@/components/motion/primitives'
-import { SectionPill, UseCaseBadge } from '@/components/ui/brand'
+import { UseCaseBadge } from '@/components/ui/brand'
 import { cn } from '@/lib/cn'
 import { featuredChain, glowFor, otherChains } from '@/lib/content'
 
@@ -13,11 +13,8 @@ const steps = featuredChain.steps
 function Intro({ className }: { className?: string }) {
   return (
     <div className={className}>
-      <Reveal>
-        <SectionPill index="04">Prompt chains</SectionPill>
-      </Reveal>
       <SplitReveal
-        className="display-md mt-6 text-balance"
+        className="display-md text-balance"
         lines={[['Seven prompts.'], [{ text: 'One launch-ready codebase.', className: 'text-white/45' }]]}
       />
     </div>
@@ -132,9 +129,9 @@ function PinnedChain() {
   return (
     <div ref={ref} className="relative hidden h-[340vh] lg:block">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="container-x flex items-end justify-between gap-10">
+        <div className="container-x">
           <Intro />
-          <p className="lede mb-2 max-w-[380px]">{featuredChain.description}</p>
+          <p className="lede mt-4 max-w-[620px]">{featuredChain.description}</p>
         </div>
         <div className="container-x mt-10">
           <ChainMeta copied={copied} />
@@ -182,7 +179,7 @@ function OtherChainsCard() {
           </div>
         ))}
       </div>
-      <p className="text-[12.5px] text-white/40">Research, UX, legal, content — new chains ship with every drop.</p>
+      <p className="text-[12.5px] text-white/40">Research, UX, legal and content. New chains ship with every drop.</p>
     </div>
   )
 }

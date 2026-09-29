@@ -20,7 +20,7 @@ export function Pricing() {
       <div className="container-x">
         <div className="flex flex-col items-center text-center">
           <Reveal>
-            <SectionPill index="06">Pricing</SectionPill>
+            <SectionPill>Pricing</SectionPill>
           </Reveal>
           <SplitReveal
             className="display-md mt-6 text-balance"

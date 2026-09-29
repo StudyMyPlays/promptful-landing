@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import { Mail, Plus } from 'lucide-react'
+import { Mail, Minus, Plus } from 'lucide-react'
 import { useId, useState } from 'react'
 import { EASE, Reveal, SplitReveal } from '@/components/motion/primitives'
 import { PremiumCta, SectionPill } from '@/components/ui/brand'
@@ -22,14 +22,14 @@ export function Faq() {
       <div className="container-x grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)] lg:gap-20">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <Reveal>
-            <SectionPill index="07">FAQ</SectionPill>
+            <SectionPill>FAQ</SectionPill>
           </Reveal>
           <SplitReveal className="display-md mt-6 text-balance" lines={[['Honest answers.'], [{ text: 'No fine print.', className: 'text-white/45' }]]} />
           <Reveal delay={0.1}>
-            <div className="cta-card mt-10 p-6">
+            <div className="mt-10 border-t border-white/[0.07] pt-6">
               <Mail className="size-5 text-mint" />
               <div className="mt-4 text-[16px] font-semibold tracking-[-0.01em]">Still wondering?</div>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-white/50">We read every message — and we answer fast.</p>
+              <p className="mt-1.5 text-[14px] leading-relaxed text-white/50">We read every message, and we answer fast.</p>
               <PremiumCta href={links.support} variant="secondary" size="sm" className="mt-5">
                 support@promptful.org
               </PremiumCta>
@@ -66,25 +66,25 @@ export function Faq() {
             </LayoutGroup>
           </Reveal>
 
-          <div className="mt-6 overflow-hidden rounded-[18px] border border-white/[0.07]">
+          <div className="mt-6 border-t border-white/[0.07]">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div key={cat} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }}>
                 {faqs[cat].map((f, i) => {
                   const isOpen = open === i
                   const id = `${uid}-${cat}-${i}`
                   return (
-                    <div key={f.q} className={cn('border-b border-white/[0.06] transition-colors last:border-b-0', isOpen && 'bg-mint/[0.02]')}>
+                    <div key={f.q} className="border-b border-white/[0.07]">
                       <h3>
                         <button
                           type="button"
                           aria-expanded={isOpen}
                           aria-controls={id}
                           onClick={() => setOpen(isOpen ? null : i)}
-                          className="flex w-full items-center gap-4 px-5 py-5 text-left sm:px-6"
+                          className="flex w-full items-center gap-4 py-5 text-left"
                         >
                           <span className={cn('flex-1 text-[15.5px] font-medium tracking-[-0.01em] transition-colors', isOpen ? 'text-white' : 'text-white/75')}>{f.q}</span>
-                          <span className={cn('grid size-7 shrink-0 place-items-center rounded-full border transition-all duration-300', isOpen ? 'rotate-45 border-mint/40 text-mint' : 'border-white/10 text-white/50')}>
-                            <Plus className="size-3.5" />
+                          <span className={cn('grid size-6 shrink-0 place-items-center transition-colors duration-200', isOpen ? 'text-mint' : 'text-white/45')}>
+                            {isOpen ? <Minus className="size-4" /> : <Plus className="size-4" />}
                           </span>
                         </button>
                       </h3>
@@ -99,7 +99,7 @@ export function Faq() {
                             transition={{ duration: 0.45, ease: EASE }}
                             className="overflow-hidden"
                           >
-                            <p className="px-5 pb-6 pr-14 text-[14.5px] leading-relaxed text-white/55 sm:px-6 sm:pr-16">{f.a}</p>
+                            <p className="pb-6 pr-12 text-[14.5px] leading-relaxed text-white/55">{f.a}</p>
                           </motion.div>
                         )}
                       </AnimatePresence>

@@ -19,10 +19,10 @@ export function Hero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const p = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.3 })
 
-  // Depth planes — each moves at its own rate
+  // Depth planes: each moves at its own rate
   const skyY = useTransform(p, [0, 1], ['0%', '22%'])
   const farY = useTransform(p, [0, 1], ['0%', '10%'])
-  const nearY = useTransform(p, [0, 1], ['0%', '-14%'])
+  const nearY = useTransform(p, [0, 1], ['0%', '-3%'])
   const copyY = useTransform(p, [0, 0.5], [0, -90])
   const copyOpacity = useTransform(p, [0, 0.38], [1, 0])
   const copyBlur = useTransform(p, [0, 0.38], ['blur(0px)', 'blur(10px)'])
@@ -56,7 +56,7 @@ export function Hero() {
 
   return (
     <section ref={ref} id="top" className="relative isolate overflow-hidden pb-[clamp(40px,8vw,120px)]">
-      {/* Plane 0 — sky */}
+      {/* Plane 0: sky */}
       <motion.div className="absolute inset-0 -z-30" style={still ? undefined : { y: skyY, x: skyX }}>
         <ArtSlot asset={assets.heroSky} priority fallback={<NightSky />} />
         <HeroVideo />
@@ -67,7 +67,7 @@ export function Hero() {
         style={{ background: 'radial-gradient(ellipse at top, rgba(92,255,176,0.09) 0%, transparent 70%)' }}
       />
 
-      {/* Plane 1 — far ridges */}
+      {/* Plane 1: far ridges */}
       <motion.div
         className="pointer-events-none absolute inset-x-[-6%] bottom-[14%] -z-10 h-[34%] md:bottom-[12%] md:h-[36%]"
         style={still ? undefined : { y: farY, x: farX }}
@@ -110,8 +110,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 1, ease: EASE, delay: 0.55 }}
         >
-          A hand-built library of production-ready prompts and chains — each tagged with the harness it runs in and the model it was
-          tuned for. Stop guessing. Start from something that already works.
+          Hand-built prompts and chains, each tagged with the harness it runs in and the model it was tuned for. Start from something
+          that already works.
         </motion.p>
         <motion.div
           className="mt-9 flex w-full max-w-[340px] flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center"
@@ -121,24 +121,16 @@ export function Hero() {
         >
           <Magnetic className="w-full sm:w-auto">
             <PremiumCta href={links.signup} size="lg" className="w-full">
-              Start free — 14 reveals
+              Start free
             </PremiumCta>
           </Magnetic>
           <PremiumCta href="#library" variant="secondary" size="lg" arrow={false} className="w-full sm:w-auto">
             Explore the library
           </PremiumCta>
         </motion.div>
-        <motion.p
-          className="micro mt-6 text-white/30"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-        >
-          No card required · Cancel Pro any time
-        </motion.p>
       </motion.div>
 
-      {/* Plane 2 — product */}
+      {/* Plane 2: product */}
       <div className="container-x relative z-10 mt-[clamp(56px,8vw,96px)] [perspective:1800px]">
         <motion.div
           className="relative mx-auto w-full max-w-[1120px] origin-bottom"
@@ -148,7 +140,7 @@ export function Hero() {
           transition={{ duration: 1.6, ease: EASE, delay: 0.45 }}
         >
           <motion.div style={still ? undefined : { rotateY: mockTiltY, rotateX: mockTiltX }} className="relative">
-            <div className="module-glow absolute -inset-[3px] rounded-[24px] opacity-70 blur-xl" aria-hidden />
+            <div className="module-glow absolute -inset-[3px] rounded-[22px] opacity-40 blur-xl" aria-hidden />
             <div className="hidden md:block">
               <ScaleToFit width={APP_W} height={APP_H}>
                 <AppWindow>
@@ -165,9 +157,9 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Plane 3 — near foreground, overlaps the product (depth cue) */}
+      {/* Plane 3: near foreground, just clipping the product's bottom edge */}
       <motion.div
-        className="pointer-events-none absolute inset-x-[-8%] -bottom-[12%] z-20 h-[44%] md:h-[48%]"
+        className="pointer-events-none absolute inset-x-[-8%] -bottom-[2%] z-20 h-[15%] md:h-[18%]"
         style={still ? undefined : { y: nearY, x: nearX }}
         initial={{ opacity: 0, y: 80 }}
         animate={{ opacity: 1, y: 0 }}
@@ -175,7 +167,7 @@ export function Hero() {
       >
         <ArtSlot
           asset={assets.heroForeground}
-          objectPosition="top"
+          objectPosition="center 30%"
           fallback={
             <div className="relative h-full w-full">
               <Ridge seed={41} height={500} base={0.5} amp={0.13} hills={0.9} octaves={2} roughness={0.3} points={200} top="#0a1f18" bottom="#020304" rim={0.45} className="absolute inset-0" />
@@ -183,15 +175,14 @@ export function Hero() {
             </div>
           }
         />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#020304]" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-b from-transparent to-[#020304]" />
       </motion.div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-40 bg-gradient-to-b from-transparent to-[#020304]" />
-      <div className="grain z-30" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-32 bg-gradient-to-b from-transparent to-[#020304]" />
     </section>
   )
 }
 
-/** Optional Seedance ambient loop — only on larger screens with motion allowed. */
+/** Optional Seedance ambient loop, only on larger screens with motion allowed. */
 function HeroVideo() {
   const [enabled, setEnabled] = useState(false)
   const [playing, setPlaying] = useState(false)

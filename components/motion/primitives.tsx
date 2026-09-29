@@ -40,7 +40,7 @@ export function Reveal({
       initial={{ opacity: 0, y, filter: `blur(${blur}px)` }}
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, amount }}
-      transition={{ duration: 1, ease: EASE, delay }}
+      transition={{ duration: 0.8, ease: EASE, delay }}
     >
       {children}
     </Comp>
@@ -76,7 +76,7 @@ export function Stagger({
 
 export const staggerItem = {
   hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.9, ease: EASE } },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, ease: EASE } },
 }
 
 /* ── SplitReveal: masked word-by-word rise ─────────────────── */
@@ -124,7 +124,7 @@ export function SplitReveal({
                       className={cn('inline-block will-change-transform', segClass)}
                       initial={{ y: '110%', rotate: 4 }}
                       animate={show ? { y: '0%', rotate: 0 } : undefined}
-                      transition={{ duration: 1.1, ease: EASE, delay: delay + i * stagger }}
+                      transition={{ duration: 0.9, ease: EASE, delay: delay + i * stagger }}
                     >
                       {word}
                     </motion.span>

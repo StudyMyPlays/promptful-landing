@@ -155,7 +155,7 @@ export function Nav() {
               transition={{ delay: 0.35, duration: 0.6, ease: EASE }}
             >
               <PremiumCta href={links.signup} size="lg" className="w-full">
-                Get started — it&apos;s free
+                Get started free
               </PremiumCta>
               <PremiumCta href={links.login} variant="secondary" size="lg" arrow={false} className="w-full">
                 Log in

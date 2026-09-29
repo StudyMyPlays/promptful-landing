@@ -4,7 +4,7 @@
  * Every photographic / generated visual on the page is looked up here.
  * While `ready` is false the page renders a code-drawn fallback (see
  * components/art), so the site is complete before the generated imagery
- * lands. Prompts for each asset live in docs/ASSET_PROMPTS.md — drop the
+ * lands. Prompts for each asset live in docs/ASSET_PROMPTS.md - drop the
  * file into public/images, run `pnpm assets:optimize`, flip `ready`.
  */
 export type Asset = {
@@ -30,12 +30,12 @@ export const assets = {
 } satisfies Record<string, Asset>
 
 export const media = {
-  neonRain: { src: '/images/media-neon-rain.webp', width: 900, height: 1600, alt: 'Neon Rain Street Portrait — a rain-soaked alley lit in mint neon', ready: false },
-  ceramicMug: { src: '/images/media-ceramic-mug.webp', width: 1200, height: 1200, alt: 'Ceramic Mug Product Shot — matte mug on stone under soft studio light', ready: false },
-  glassIcon: { src: '/images/media-glass-icon.webp', width: 1088, height: 608, alt: 'Glass App Icon — a frosted glass glyph with a mint core', ready: true },
-  synthwave: { src: '/images/media-synthwave.webp', width: 1024, height: 768, alt: 'Retro Synthwave Skyline — city silhouette under a gridded horizon', ready: true },
-  clockwork: { src: '/images/media-clockwork.webp', width: 1024, height: 768, alt: 'Steampunk Clockwork — brass gears turning in low amber light', ready: true },
-  heroBanner: { src: '/images/media-saas-banner.webp', width: 1600, height: 900, alt: 'SaaS Hero Banner — abstract glass panels floating in dark space', ready: false },
+  neonRain: { src: '/images/media-neon-rain.webp', width: 900, height: 1600, alt: 'Neon Rain Street Portrait: a rain-soaked alley lit in mint neon', ready: false },
+  ceramicMug: { src: '/images/media-ceramic-mug.webp', width: 1200, height: 1200, alt: 'Ceramic Mug Product Shot: matte mug on stone under soft studio light', ready: false },
+  glassIcon: { src: '/images/media-glass-icon.webp', width: 1088, height: 608, alt: 'Glass App Icon: a frosted glass glyph with a mint core', ready: true },
+  synthwave: { src: '/images/media-synthwave.webp', width: 1024, height: 768, alt: 'Retro Synthwave Skyline: city silhouette under a gridded horizon', ready: true },
+  clockwork: { src: '/images/media-clockwork.webp', width: 1024, height: 768, alt: 'Steampunk Clockwork: brass gears turning in low amber light', ready: true },
+  heroBanner: { src: '/images/media-saas-banner.webp', width: 1600, height: 900, alt: 'SaaS Hero Banner: abstract glass panels floating in dark space', ready: false },
 } satisfies Record<string, Asset>
 
 export const videos = {

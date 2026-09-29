@@ -1,5 +1,5 @@
 /**
- * Code-drawn nocturnal terrain — the fallback (and texture layer) for the
+ * Code-drawn nocturnal terrain: the fallback (and texture layer) for the
  * generated landscape imagery. Deterministic so SSR and client match.
  */
 import Image from 'next/image'
