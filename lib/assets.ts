@@ -32,13 +32,13 @@ export const assets = {
 export const media = {
   neonRain: { src: '/images/media-neon-rain.webp', width: 900, height: 1600, alt: 'Neon Rain Street Portrait — a rain-soaked alley lit in mint neon', ready: false },
   ceramicMug: { src: '/images/media-ceramic-mug.webp', width: 1200, height: 1200, alt: 'Ceramic Mug Product Shot — matte mug on stone under soft studio light', ready: false },
-  glassIcon: { src: '/images/media-glass-icon.webp', width: 1200, height: 1200, alt: 'Glass App Icon — a frosted glass glyph with a mint core', ready: false },
-  synthwave: { src: '/images/media-synthwave.webp', width: 1600, height: 900, alt: 'Retro Synthwave Skyline — city silhouette under a gridded horizon', ready: false },
-  clockwork: { src: '/images/media-clockwork.webp', width: 1600, height: 900, alt: 'Steampunk Clockwork — brass gears turning in low amber light', ready: false },
+  glassIcon: { src: '/images/media-glass-icon.webp', width: 1088, height: 608, alt: 'Glass App Icon — a frosted glass glyph with a mint core', ready: true },
+  synthwave: { src: '/images/media-synthwave.webp', width: 1024, height: 768, alt: 'Retro Synthwave Skyline — city silhouette under a gridded horizon', ready: true },
+  clockwork: { src: '/images/media-clockwork.webp', width: 1024, height: 768, alt: 'Steampunk Clockwork — brass gears turning in low amber light', ready: true },
   heroBanner: { src: '/images/media-saas-banner.webp', width: 1600, height: 900, alt: 'SaaS Hero Banner — abstract glass panels floating in dark space', ready: false },
 } satisfies Record<string, Asset>
 
 export const videos = {
-  heroLoop: { src: '/video/hero-aurora.mp4', poster: '/images/hero-sky.webp', ready: false },
+  heroLoop: { src: '/video/hero-aurora.mp4', poster: '/images/hero-sky.webp', ready: true },
   clockwork: { src: '/video/steampunk-clockwork.mp4', poster: '/images/media-clockwork.webp', ready: false },
 } satisfies Record<string, VideoAsset>
