@@ -69,7 +69,7 @@ export function Hero() {
 
       {/* Plane 1 — far ridges */}
       <motion.div
-        className="pointer-events-none absolute inset-x-[-6%] bottom-[16%] -z-10 h-[46%] md:bottom-[22%]"
+        className="pointer-events-none absolute inset-x-[-6%] bottom-[14%] -z-10 h-[34%] md:bottom-[12%] md:h-[36%]"
         style={still ? undefined : { y: farY, x: farX }}
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,14 +77,15 @@ export function Hero() {
       >
         <ArtSlot
           asset={assets.heroRidges}
+          className="brightness-[0.6] saturate-[1.15]"
           fallback={
             <div className="relative h-full w-full">
               <Ridge seed={11} height={600} base={0.5} amp={0.2} hills={1.1} octaves={3} roughness={0.38} top="#12342a" bottom="#05100c" rim={0.25} className="absolute inset-0 opacity-60" />
               <Ridge seed={23} height={600} base={0.68} amp={0.16} hills={1.7} octaves={4} roughness={0.4} top="#0c211a" bottom="#030806" rim={0.45} className="absolute inset-0" />
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#020304]/80" />
             </div>
           }
         />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#020304]/80" />
       </motion.div>
 
       {/* Copy */}

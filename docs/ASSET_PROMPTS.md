@@ -6,7 +6,8 @@ Every visual slot on the landing page already has a code-drawn fallback, so the 
 
 1. Generate each asset on fal.ai using the model named below.
 2. Download the file and save it to `public/images/src/<filename>.png`. Save videos straight into `public/video/`.
-3. Run `pnpm assets:optimize`. It writes an optimised WebP to `public/images/<filename>.webp` and keeps the alpha channel.
+   - If a "transparent" image arrives with a grey/white checkerboard painted into the pixels (no real alpha channel), key it out first: `node scripts/remove-checkerboard.mjs <download> public/images/src/<filename>.png`. The script flood-fills the checkerboard from the top edge, feathers the fringe, and crops away the empty sky.
+3. Run `pnpm assets:optimize`. Full-bleed layers smaller than 2048px wide are upscaled with Lanczos plus a light sharpen, but generating at 2048px or wider always looks better. It writes an optimised WebP to `public/images/<filename>.webp` and keeps the alpha channel.
 4. In `lib/assets.ts`, set `ready: true` for that entry.
 
 ## Shared art direction
