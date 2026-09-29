@@ -17,6 +17,9 @@ import sharp from 'sharp'
 const SRC = 'public/images/src'
 const OUT = 'public/images'
 const MAX = { 'hero-': 2560, 'showcase-': 2560, 'cta-': 2560, 'media-': 1600 }
+// Full-bleed layers are stretched across wide screens: low-res sources are
+// upscaled (Lanczos + light sharpen) to at least this width.
+const MIN = { 'hero-': 2048, 'showcase-': 2048, 'cta-': 2048 }
 
 const files = (await readdir(SRC).catch(() => [])).filter((f) => /\.(png|jpe?g|webp)$/i.test(f))
 if (!files.length) {
@@ -31,10 +34,15 @@ for (const file of files) {
   const output = path.join(OUT, `${name}.webp`)
   const img = sharp(input)
   const meta = await img.metadata()
+  const min = Object.entries(MIN).find(([p]) => name.startsWith(p))?.[1] ?? 0
+  const target = Math.min(max, Math.max(min, meta.width ?? max))
+  const upscale = target > (meta.width ?? target)
   await img
-    .resize({ width: Math.min(max, meta.width ?? max), withoutEnlargement: true })
+    .resize({ width: target, kernel: 'lanczos3' })
+    .sharpen(upscale ? { sigma: 0.8, m1: 0.6, m2: 1.2 } : undefined)
     .webp({ quality: meta.hasAlpha ? 86 : 80, alphaQuality: 90, effort: 6, smartSubsample: true })
     .toFile(output)
   const { size } = await stat(output)
-  console.log(`${file} → ${output}  ${meta.width}×${meta.height}${meta.hasAlpha ? ' (alpha)' : ''}  ${(size / 1024).toFixed(0)} KB`)
+  const out = await sharp(output).metadata()
+  console.log(`${file} → ${output}  ${meta.width}×${meta.height} → ${out.width}×${out.height}${meta.hasAlpha ? ' (alpha)' : ''}  ${(size / 1024).toFixed(0)} KB`)
 }

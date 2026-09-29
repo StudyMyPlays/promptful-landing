@@ -22,11 +22,11 @@ export type VideoAsset = {
 }
 
 export const assets = {
-  heroSky: { src: '/images/hero-sky.webp', width: 2560, height: 1440, alt: '', ready: false },
-  heroRidges: { src: '/images/hero-ridges.webp', width: 2560, height: 900, alt: '', ready: false },
-  heroForeground: { src: '/images/hero-foreground.webp', width: 2560, height: 820, alt: '', ready: false },
-  showcaseBackdrop: { src: '/images/showcase-backdrop.webp', width: 2560, height: 1440, alt: '', ready: false },
-  ctaTerrain: { src: '/images/cta-terrain.webp', width: 2560, height: 700, alt: '', ready: false },
+  heroSky: { src: '/images/hero-sky.webp', width: 2048, height: 1536, alt: '', ready: true },
+  heroRidges: { src: '/images/hero-ridges.webp', width: 2048, height: 690, alt: '', ready: true },
+  heroForeground: { src: '/images/hero-foreground.webp', width: 2048, height: 732, alt: '', ready: true },
+  showcaseBackdrop: { src: '/images/showcase-backdrop.webp', width: 2048, height: 1536, alt: '', ready: true },
+  ctaTerrain: { src: '/images/cta-terrain.webp', width: 2048, height: 794, alt: '', ready: true },
 } satisfies Record<string, Asset>
 
 export const media = {

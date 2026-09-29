@@ -4,3 +4,7 @@ out/
 *.tsbuildinfo
 .env*.local
 .vercel/
+
+# raw generated assets (optimised copies live in public/images)
+public/images/src/*
+!public/images/src/.gitkeep
