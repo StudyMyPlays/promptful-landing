@@ -27,7 +27,12 @@ const isChecker = (i) => {
 // Flood fill from every top-row checker pixel (4-connected)
 const bg = new Uint8Array(W * H)
 const stack = []
-for (let x = 0; x < W; x++) if (isChecker(x)) (bg[x] = 1), stack.push(x)
+for (let x = 0; x < W; x++) {
+  if (isChecker(x)) {
+    bg[x] = 1
+    stack.push(x)
+  }
+}
 while (stack.length) {
   const i = stack.pop()
   const x = i % W
@@ -35,7 +40,10 @@ while (stack.length) {
   for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
     if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue
     const j = ny * W + nx
-    if (!bg[j] && isChecker(j)) (bg[j] = 1), stack.push(j)
+    if (!bg[j] && isChecker(j)) {
+      bg[j] = 1
+      stack.push(j)
+    }
   }
 }
 
