@@ -4,8 +4,8 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Check, Copy, Fingerprint, Lock, RotateCcw } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { SpotlightCard } from '@/components/motion/interactive'
-import { EASE, Reveal, SplitReveal, Stagger, staggerItem } from '@/components/motion/primitives'
-import { SectionPill, UseCaseBadge } from '@/components/ui/brand'
+import { Reveal, SplitReveal } from '@/components/motion/primitives'
+import { UseCaseBadge } from '@/components/ui/brand'
 import { cn } from '@/lib/cn'
 import { glowFor } from '@/lib/content'
 
@@ -21,7 +21,7 @@ const promptLines = [
   'outcome, not the feature. Max 9 words in the headline.',
   '# Constraints',
   'No "revolutionary". No "AI-powered". Give three options',
-  'and say which one you would ship — and why.',
+  'and say which one you would ship, and why.',
 ]
 
 export function RevealDemo() {
@@ -85,7 +85,7 @@ export function RevealDemo() {
     try {
       await navigator.clipboard.writeText(promptLines.join('\n'))
     } catch {
-      /* clipboard unavailable — still show confirmation */
+      /* clipboard unavailable: still show confirmation */
     }
     setCopied(true)
     setTimeout(() => setCopied(false), 1600)
@@ -104,40 +104,26 @@ export function RevealDemo() {
       />
       <div className="container-x grid items-center gap-[clamp(48px,6vw,96px)] lg:grid-cols-[1fr_1.05fr]">
         <div>
-          <Reveal>
-            <SectionPill index="03">How it works</SectionPill>
-          </Reveal>
           <SplitReveal
-            className="display-md mt-6 text-balance"
+            className="display-md text-balance"
             lines={[['Press. Hold.'], [{ text: 'It’s yours for good.', className: 'text-white/45' }]]}
           />
           <Reveal delay={0.1}>
             <p className="lede mt-6 max-w-[480px]">
               Free accounts browse the whole library and reveal 14 prompts and 2 chains of their choosing. Once revealed, a prompt stays
-              yours — even if you never upgrade.
+              yours, even if you never upgrade.
             </p>
           </Reveal>
-          <Stagger className="mt-10 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3" stagger={0.1}>
-            {[
-              ['01', 'Browse everything', 'Titles, tags and tools are always visible.'],
-              ['02', 'Hold to reveal', 'A deliberate press — no accidental spends.'],
-              ['03', 'Keep it forever', 'Revealed prompts survive any plan change.'],
-            ].map(([n, t, d]) => (
-              <motion.div key={n} variants={staggerItem} className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
-                <span className="font-mono text-[10px] font-semibold tracking-[0.14em] text-mint/70">{n}</span>
-                <div className="mt-2 text-[14.5px] font-semibold tracking-[-0.01em]">{t}</div>
-                <div className="mt-1 text-[13px] leading-relaxed text-white/50">{d}</div>
-              </motion.div>
-            ))}
-          </Stagger>
         </div>
 
         <Reveal y={40} className="relative">
           <SpotlightCard className="rounded-[22px] border border-white/[0.08] bg-[#0a0a0a] shadow-[0_40px_100px_-40px_rgba(0,0,0,.9)]">
             <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] px-5 py-4">
               <UseCaseBadge label="Sales & Marketing" glow={glowFor('Sales & Marketing')} />
-              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/35">Runs in ChatGPT Work</span>
-              <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.12em] text-white/30">Prompt</span>
+              <span className="text-[11px] font-medium">
+                <span className="text-white/35">Use with </span>
+                <span className="text-[#7fcdb3]">ChatGPT Work</span>
+              </span>
             </div>
             <div className="px-5 pt-5">
               <h3 className="text-[19px] font-semibold tracking-[-0.02em]">Landing Page Hero Rewriter</h3>
@@ -145,8 +131,8 @@ export function RevealDemo() {
             <div className="relative mx-5 mt-4 overflow-hidden rounded-xl border border-white/[0.06] bg-black/40 p-4">
               <div
                 className="space-y-1 font-mono text-[12px] leading-[1.75] text-white/70 transition-[filter] duration-150 sm:text-[12.5px]"
-                style={{ filter: `blur(${reduce && !revealed ? 6 : blur}px)` }}
-                aria-hidden={!revealed}
+                style={{ filter: `blur(${revealed ? 6 : reduce ? 6 : blur}px)`, opacity: revealed ? 0 : 1, transition: 'opacity 600ms ease 400ms' }}
+                aria-hidden
               >
                 {promptLines.map((l, i) => (
                   <p key={i} className={l.startsWith('#') ? 'text-white/95' : undefined}>
@@ -174,13 +160,30 @@ export function RevealDemo() {
                 )}
               </AnimatePresence>
               {revealed && (
-                <motion.div
-                  className="pointer-events-none absolute inset-0"
-                  initial={{ opacity: 0.7 }}
-                  animate={{ opacity: 0 }}
-                  transition={{ duration: 1.2, ease: EASE }}
-                  style={{ background: 'radial-gradient(circle at 50% 50%, rgba(92,255,176,.25), transparent 60%)' }}
-                />
+                <>
+                  {/* Top-down wipe with a light beam, as in the app's reveal */}
+                  <motion.div
+                    className="absolute inset-0 space-y-1 p-4 font-mono text-[12px] leading-[1.75] text-white/70 sm:text-[12.5px]"
+                    initial={reduce ? { opacity: 0 } : { clipPath: 'inset(0 0 100% 0)' }}
+                    animate={reduce ? { opacity: 1 } : { clipPath: 'inset(0 0 0% 0)' }}
+                    transition={{ duration: 0.9, ease: [0.77, 0, 0.175, 1] }}
+                  >
+                    {promptLines.map((l, i) => (
+                      <p key={i} className={l.startsWith('#') ? 'text-white/95' : undefined}>
+                        {l}
+                      </p>
+                    ))}
+                  </motion.div>
+                  {!reduce && (
+                    <motion.div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 h-px bg-mint shadow-[0_0_14px_3px_rgba(92,255,176,.55)]"
+                      initial={{ top: '0%', opacity: 1 }}
+                      animate={{ top: '100%', opacity: [1, 1, 0] }}
+                      transition={{ duration: 0.9, ease: [0.77, 0, 0.175, 1] }}
+                    />
+                  )}
+                </>
               )}
             </div>
 
@@ -259,7 +262,7 @@ export function RevealDemo() {
                   </button>
                 )}
                 <p className="mt-2.5 text-center text-[11.5px] text-white/35" aria-live="polite">
-                  {revealed ? 'Revealed — this one is yours now.' : 'Press and hold for a moment to confirm'}
+                  {revealed ? 'Revealed. This one is yours now.' : 'Press and hold for a moment to confirm'}
                 </p>
               </div>
             </div>

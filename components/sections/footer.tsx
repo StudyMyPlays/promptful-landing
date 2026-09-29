@@ -40,10 +40,6 @@ export function Footer() {
             <p className="mt-4 max-w-[300px] text-[14px] leading-relaxed text-white/45">
               A curated collection of exclusive prompts, created for everything.
             </p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/[0.07] bg-white/[0.02] px-3 py-1.5">
-              <span className="pulse-dot size-1.5 rounded-full bg-mint" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/45">New drops weekly</span>
-            </div>
           </div>
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {cols.map((c) => (

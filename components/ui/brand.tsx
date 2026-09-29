@@ -77,26 +77,17 @@ export function StatusPill({ children, className }: { children: React.ReactNode;
         className,
       )}
     >
-      <span className="pulse-dot size-1.5 rounded-full bg-mint shadow-[0_0_6px_rgba(92,255,176,0.8)]" />
+      <span className="size-1.5 rounded-full bg-mint shadow-[0_0_6px_rgba(92,255,176,0.8)]" />
       <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-mint">{children}</span>
     </span>
   )
 }
 
-/** Section pill — Fora-style "• Intro" chip in Promptful's language */
-export function SectionPill({ children, index, className }: { children: React.ReactNode; index?: string; className?: string }) {
+/** Plain-language section label. Used sparingly: at most one per three sections. */
+export function SectionPill({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.025] py-1 pl-2 pr-3.5 backdrop-blur-md',
-        className,
-      )}
-    >
-      <span className="grid size-5 place-items-center rounded-full bg-mint/10 ring-1 ring-mint/25">
-        <span className="size-1.5 rounded-full bg-mint shadow-[0_0_8px_rgba(92,255,176,.9)]" />
-      </span>
-      {index && <span className="font-mono text-[10.5px] font-semibold tracking-[0.12em] text-white/30">{index}</span>}
-      <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white/70">{children}</span>
+    <span className={cn('inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1 text-[12.5px] font-medium text-white/60', className)}>
+      {children}
     </span>
   )
 }

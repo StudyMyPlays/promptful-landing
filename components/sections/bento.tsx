@@ -6,18 +6,16 @@ import { Heart, Newspaper, Play } from 'lucide-react'
 import { ProximityGroup, SpotlightCard } from '@/components/motion/interactive'
 import { EASE, Reveal, SplitReveal, Stagger, staggerItem } from '@/components/motion/primitives'
 import { MediaArt } from '@/components/mock/media-art'
-import { SectionPill } from '@/components/ui/brand'
 import { cn } from '@/lib/cn'
 import { harnesses, models, platforms, useCases } from '@/lib/content'
 
-function CardShell({ className, eyebrow, title, body, children }: { className?: string; eyebrow: string; title: string; body: string; children: React.ReactNode }) {
+function CardShell({ className, title, body, children }: { className?: string; title: string; body: string; children: React.ReactNode }) {
   return (
     <motion.div variants={staggerItem} className={cn('min-w-0', className)}>
       <SpotlightCard className="flex h-full flex-col rounded-[22px] border border-white/[0.07] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))]">
         <div className="relative min-h-[220px] flex-1 overflow-hidden">{children}</div>
         <div className="border-t border-white/[0.05] p-6">
-          <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-mint/70">{eyebrow}</div>
-          <h3 className="mt-2 text-[19px] font-semibold tracking-[-0.02em]">{title}</h3>
+          <h3 className="text-[19px] font-semibold tracking-[-0.02em]">{title}</h3>
           <p className="mt-1.5 text-[14px] leading-relaxed text-white/50">{body}</p>
         </div>
       </SpotlightCard>
@@ -160,42 +158,34 @@ export function Bento() {
   return (
     <section id="features" className="relative py-[clamp(96px,13vw,180px)]">
       <div className="container-x">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <Reveal>
-              <SectionPill index="05">What you get</SectionPill>
-            </Reveal>
-            <SplitReveal
-              className="display-md mt-6 max-w-[640px] text-balance"
-              lines={[['Built like a library.'], [{ text: 'Used like a toolkit.', className: 'text-white/45' }]]}
-            />
-          </div>
+        <div className="max-w-[640px]">
+          <SplitReveal
+            className="display-md text-balance"
+            lines={[['Built like a library.'], [{ text: 'Used like a toolkit.', className: 'text-white/45' }]]}
+          />
           <Reveal delay={0.1}>
-            <p className="lede max-w-[380px]">
-              Every prompt is findable in two clicks, runnable in one, and tells you exactly what it was built for.
-            </p>
+            <p className="lede mt-4">Findable in two clicks, runnable in one, and clear about what it was built for.</p>
           </Reveal>
         </div>
 
         <Stagger className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-6" stagger={0.08} amount={0.1}>
           <CardShell
             className="md:col-span-2 lg:col-span-4"
-            eyebrow="17 use cases"
             title="Organised by the job, not the jargon."
-            body="Coding to household, legal to travel — every card carries a use case with its own colour, so the library reads at a glance."
+            body="Coding to household, legal to travel. Every card carries a use case with its own colour, so the library reads at a glance."
           >
             <UseCaseConstellation />
           </CardShell>
-          <CardShell className="lg:col-span-2" eyebrow="Filters" title="Filter by where it runs." body="Harness, model and platform — narrow the whole library to the three you need.">
+          <CardShell className="lg:col-span-2" title="Filter by where it runs." body="Harness, model and platform. Narrow the whole library to the three you need.">
             <FilterPanel />
           </CardShell>
-          <CardShell className="lg:col-span-2" eyebrow="Pro · Media" title="Image & video, with receipts." body="Every media prompt ships with the output it made and the settings behind it.">
+          <CardShell className="lg:col-span-2" title="Image & video, with receipts." body="Every media prompt ships with the output it made and the settings behind it.">
             <MediaMosaic />
           </CardShell>
-          <CardShell className="lg:col-span-2" eyebrow="Favorites" title="Your go-to shelf." body="Heart what works. Most used and most recent, always one tap away.">
+          <CardShell className="lg:col-span-2" title="Your go-to shelf." body="Heart what works. Most used and most recent, always one tap away.">
             <Favorites />
           </CardShell>
-          <CardShell className="md:col-span-2 lg:col-span-2" eyebrow="The Knowledge Layer" title="Know what’s moving." body="The 2026 AI Tool Index and a weekly trend newsletter — included with Pro.">
+          <CardShell className="md:col-span-2 lg:col-span-2" title="Know what’s moving." body="The 2026 AI Tool Index and a weekly trend newsletter, included with Pro.">
             <KnowledgeLayer />
           </CardShell>
         </Stagger>

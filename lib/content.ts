@@ -31,8 +31,8 @@ export type Tool = { label: string; logo: string; kind: 'harness' | 'model' | 'p
 
 export const harnesses: Tool[] = [
   { label: 'Claude Code', logo: '/platforms/claude-color.webp', kind: 'harness' },
-  { label: 'Codex', logo: '/platforms/openai.webp', kind: 'harness', invert: true },
-  { label: 'ChatGPT Work', logo: '/platforms/openai.webp', kind: 'harness', invert: true },
+  { label: 'Codex', logo: '/platforms/openai.webp', kind: 'harness' },
+  { label: 'ChatGPT Work', logo: '/platforms/openai.webp', kind: 'harness' },
   { label: 'Perplexity Comet', logo: '/platforms/perplexity-color.webp', kind: 'harness' },
   { label: 'Perplexity Computer', logo: '/platforms/perplexity-color.webp', kind: 'harness' },
   { label: 'Claude Co-Work', logo: '/platforms/claude-color.webp', kind: 'harness' },
@@ -41,12 +41,13 @@ export const harnesses: Tool[] = [
 ]
 
 export const models: Tool[] = [
-  { label: 'Astra', logo: '/platforms/openai.webp', kind: 'model', invert: true },
+  { label: 'Astra', logo: '/platforms/openai.webp', kind: 'model' },
   { label: 'Fable 3.1', logo: '/platforms/claude-color.webp', kind: 'model' },
   { label: 'Gemini 3.8', logo: '/platforms/gemini-color.svg', kind: 'model' },
   { label: 'Deep Research', logo: '/platforms/perplexity-color.webp', kind: 'model' },
-  { label: 'GPT Image 2', logo: '/platforms/openai.webp', kind: 'model', invert: true },
-  { label: 'Runway Aleph 2', logo: '/platforms/runway.webp', kind: 'model' },
+  { label: 'GPT Image 2', logo: '/platforms/openai.webp', kind: 'model' },
+  { label: 'Nano Banana Pro', logo: '/platforms/gemini-color.svg', kind: 'model' },
+  { label: 'Runway Aleph 2', logo: '/platforms/runway.webp', kind: 'model', invert: true },
   { label: 'Seedance 2.0', logo: '/platforms/seedance.webp', kind: 'model' },
 ]
 
@@ -62,6 +63,29 @@ export const platforms: Tool[] = [
   { label: 'Reddit', logo: '/platforms/reddit.svg', kind: 'platform' },
 ]
 
+/** Brand colours per model / harness, as used by the app's logo chips (be-promptful lib/constants.ts). */
+export const modelMeta: Record<string, { logo: string; color: string; invert?: boolean }> = {
+  Astra: { logo: '/platforms/openai.webp', color: '#10A37F' },
+  'Fable 3.1': { logo: '/platforms/claude-color.webp', color: '#C15F3C' },
+  'Gemini 3.8': { logo: '/platforms/gemini-color.svg', color: '#4285F4' },
+  'Deep Research': { logo: '/platforms/perplexity-color.webp', color: '#20808D' },
+  'GPT Image 2': { logo: '/platforms/openai.webp', color: '#10A37F' },
+  'Nano Banana Pro': { logo: '/platforms/gemini-color.svg', color: '#FBBC04' },
+  'Runway Aleph 2': { logo: '/platforms/runway.webp', color: '#FFFFFF', invert: true },
+  'Seedance 2.0': { logo: '/platforms/seedance.webp', color: '#0EA5E9' },
+}
+
+export const harnessColor: Record<string, string> = {
+  'Claude Code': '#C15F3C',
+  'Claude Co-Work': '#C15F3C',
+  Codex: '#10A37F',
+  'ChatGPT Work': '#10A37F',
+  'Perplexity Comet': '#20808D',
+  'Perplexity Computer': '#20808D',
+  'Firecrawl Agent': '#FF6B35',
+  'Higgsfield Supercomputer': '#D946EF',
+}
+
 export type SamplePrompt = {
   title: string
   useCase: string
@@ -72,6 +96,8 @@ export type SamplePrompt = {
   runs: number
   body: string[]
   chain?: boolean
+  /** Extra models beyond the lead one; the card shows a "+N" on the logo. */
+  additionalModels?: string[]
 }
 
 export const samplePrompts: SamplePrompt[] = [
@@ -81,6 +107,7 @@ export const samplePrompts: SamplePrompt[] = [
     harness: 'Claude Code',
     harnessLogo: '/platforms/claude-color.webp',
     model: 'Fable 3.1',
+    additionalModels: ['Astra', 'Gemini 3.8'],
     tags: ['review', 'security', 'bugs'],
     runs: 1284,
     chain: true,
@@ -145,7 +172,7 @@ export const samplePrompts: SamplePrompt[] = [
     body: [
       'Walk every route with a keyboard only.',
       'Check contrast, focus order, names and live regions.',
-      'Fix in place — then list what still needs a human.',
+      'Fix in place, then list what still needs a human.',
     ],
   },
   {
@@ -201,10 +228,10 @@ export const pricing = {
     name: 'Free',
     price: '$0',
     cadence: '/ permanent',
-    tagline: 'Reveal 14 text prompts and 2 chains from the library — yours to keep.',
+    tagline: 'Reveal 14 text prompts and 2 chains from the library. Yours to keep.',
     features: [
       'Browse the full text prompt library and every chain',
-      'Reveal 14 prompts and 2 chains — yours to keep',
+      'Reveal 14 prompts and 2 chains, yours to keep',
       'Platforms and favorites',
     ],
     cta: 'Start for free',
@@ -214,7 +241,7 @@ export const pricing = {
     price: '$20',
     cadence: '/ month',
     tagline: 'For power users, creators, and developers needing production-ready scale.',
-    billing: 'Billed monthly through Polar — cancel any time',
+    billing: 'Billed monthly through Polar. Cancel any time.',
     features: [
       { title: 'Unlimited text prompts and chains', detail: 'No reveal limit, ever.' },
       { title: 'The Image Prompt Library', detail: 'Every image prompt and the picture it made.', proOnly: true },
@@ -227,7 +254,7 @@ export const pricing = {
   },
   academy: {
     name: 'AI Academy',
-    headline: '4 weeks to AI that does the work — not just talks about it.',
+    headline: '4 weeks to AI that does the work, not just talks about it.',
     price: '$279',
     cadence: 'one-time · no subscription',
     stats: [
@@ -244,7 +271,7 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
   General: [
     {
       q: 'What is Promptful?',
-      a: 'A curated library of production-ready prompts. Every prompt is written by hand, tagged with the use case it solves, the harness it runs in and the model it was tuned for — so you stop guessing and start from something that already works.',
+      a: 'A curated library of production-ready prompts. Every prompt is written by hand, tagged with the use case it solves, the harness it runs in and the model it was tuned for, so you stop guessing and start from something that already works.',
     },
     {
       q: 'Who writes the prompts?',
@@ -252,13 +279,13 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
     },
     {
       q: 'Do I need to be technical?',
-      a: 'No. Most prompts are copy, paste, run. The coding and agent prompts say exactly which harness they were built for — Claude Code, Codex, Perplexity Comet and more — so you know where to paste them.',
+      a: 'No. Most prompts are copy, paste, run. The coding and agent prompts say exactly which harness they were built for (Claude Code, Codex, Perplexity Comet and more), so you know where to paste them.',
     },
   ],
   'Plans & billing': [
     {
       q: 'What do I actually get for $20 a month?',
-      a: 'Every prompt and every chain, with no reveal limit — plus the image and video prompt libraries, with the picture or clip each one produced and the settings behind it. Free accounts browse the whole library and reveal 14 prompts and 2 chains of their choosing, and anything revealed stays theirs after upgrading.',
+      a: 'Every prompt and every chain, with no reveal limit, plus the image and video prompt libraries, with the picture or clip each one produced and the settings behind it. Free accounts browse the whole library and reveal 14 prompts and 2 chains of their choosing, and anything revealed stays theirs after upgrading.',
     },
     {
       q: 'Can I cancel my subscription?',
@@ -272,11 +299,11 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
   'The library': [
     {
       q: 'What is a prompt chain?',
-      a: 'An ordered, runnable sequence — every step shares one use case. Step through it with Back and Next, copy each prompt as you go, or copy the whole chain at once.',
+      a: 'An ordered, runnable sequence where every step shares one use case. Step through it with Back and Next, copy each prompt as you go, or copy the whole chain at once.',
     },
     {
       q: 'What happens when I reveal a prompt on Free?',
-      a: 'Press and hold to reveal. It uses one of your 14 free reveals, and once revealed it stays yours for good — even if you never upgrade.',
+      a: 'Press and hold to reveal. It uses one of your 14 free reveals, and once revealed it stays yours for good, even if you never upgrade.',
     },
     {
       q: 'Which tools are the prompts written for?',

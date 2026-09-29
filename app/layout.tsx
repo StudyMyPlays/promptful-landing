@@ -7,9 +7,9 @@ import './globals.css'
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans', display: 'swap' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' })
 
-const title = 'Promptful — Curated. Validated. Yours.'
+const title = 'Promptful | Curated. Validated. Yours.'
 const description =
-  'A curated library of production-ready prompts and chains — each tagged with the harness it runs in and the model it was tuned for. Reveal 14 free.'
+  'A curated library of production-ready prompts and chains, each tagged with the harness it runs in and the model it was tuned for. Reveal 14 free.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
@@ -42,6 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <SmoothScroll>{children}</SmoothScroll>
+        <div aria-hidden className="grain z-[60]" style={{ position: 'fixed' }} />
       </body>
     </html>
   )
