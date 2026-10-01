@@ -22,7 +22,7 @@ export function Hero() {
   // Depth planes: each moves at its own rate
   const skyY = useTransform(p, [0, 1], ['0%', '22%'])
   const farY = useTransform(p, [0, 1], ['0%', '10%'])
-  const nearY = useTransform(p, [0, 1], ['0%', '-3%'])
+  const nearY = useTransform(p, [0, 1], ['0%', '-8%'])
   const copyY = useTransform(p, [0, 0.5], [0, -90])
   const copyOpacity = useTransform(p, [0, 0.38], [1, 0])
   const copyBlur = useTransform(p, [0, 0.38], ['blur(0px)', 'blur(10px)'])
@@ -55,7 +55,7 @@ export function Hero() {
   const still = !!reduce
 
   return (
-    <section ref={ref} id="top" className="relative isolate overflow-hidden pb-[clamp(40px,8vw,120px)]">
+    <section ref={ref} id="top" className="relative isolate overflow-hidden">
       {/* Plane 0: sky */}
       <motion.div className="absolute inset-0 -z-30" style={still ? undefined : { y: skyY, x: skyX }}>
         <ArtSlot asset={assets.heroSky} priority fallback={<NightSky />} />
@@ -67,9 +67,9 @@ export function Hero() {
         style={{ background: 'radial-gradient(ellipse at top, rgba(92,255,176,0.09) 0%, transparent 70%)' }}
       />
 
-      {/* Plane 1: far ridges */}
+      {/* Plane 1: far ridges. Crest kept whole (top-anchored), bottom dissolves via mask so no seam shows. */}
       <motion.div
-        className="pointer-events-none absolute inset-x-[-6%] bottom-[14%] -z-10 h-[34%] md:bottom-[12%] md:h-[36%]"
+        className="pointer-events-none absolute inset-x-[-6%] bottom-[16%] -z-10 aspect-[2048/690] min-h-[300px] [mask-image:linear-gradient(to_bottom,black_55%,transparent)] md:bottom-[14%]"
         style={still ? undefined : { y: farY, x: farX }}
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,7 +77,9 @@ export function Hero() {
       >
         <ArtSlot
           asset={assets.heroRidges}
-          className="brightness-[0.6] saturate-[1.15]"
+          unoptimized
+          objectPosition="center top"
+          className="brightness-[0.55] saturate-[1.15]"
           fallback={
             <div className="relative h-full w-full">
               <Ridge seed={11} height={600} base={0.5} amp={0.2} hills={1.1} octaves={3} roughness={0.38} top="#12342a" bottom="#05100c" rim={0.25} className="absolute inset-0 opacity-60" />
@@ -85,7 +87,6 @@ export function Hero() {
             </div>
           }
         />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#020304]/80" />
       </motion.div>
 
       {/* Copy */}
@@ -110,8 +111,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 1, ease: EASE, delay: 0.55 }}
         >
-          Hand-built prompts and chains, each tagged with the harness it runs in and the model it was tuned for. Start from something
-          that already works.
+          Stop rewriting prompts that only half work. Promptful is a hand-built library of tested prompts and chains, each tagged with
+          the tool it runs in and the model it was tuned for.
         </motion.p>
         <motion.div
           className="mt-9 flex w-full max-w-[340px] flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center"
@@ -130,8 +131,30 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Plane 2: product */}
+      {/* Plane 2: product, resting in a grass valley (Plane 3) that sits behind it so nothing is covered */}
       <div className="container-x relative z-10 mt-[clamp(56px,8vw,96px)] [perspective:1800px]">
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute left-[calc(50%-max(64vw,380px))] top-[calc(100%-clamp(150px,19vw,300px))] -z-10 aspect-[2048/732] w-[max(128vw,760px)]"
+          style={still ? undefined : { y: nearY, x: nearX }}
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 0.35 }}
+        >
+          <ArtSlot
+            asset={assets.heroForeground}
+            unoptimized
+            objectPosition="center top"
+            className="[mask-image:linear-gradient(to_bottom,black_70%,transparent)]"
+            fallback={
+              <div className="relative h-full w-full">
+                <Ridge seed={41} height={500} base={0.5} amp={0.13} hills={0.9} octaves={2} roughness={0.3} points={200} top="#0a1f18" bottom="#020304" rim={0.45} className="absolute inset-0" />
+                <Ridge seed={57} height={500} base={0.68} amp={0.1} hills={1.4} octaves={2} roughness={0.3} points={200} top="#05110d" bottom="#020304" rim={0.22} className="absolute inset-0" />
+              </div>
+            }
+          />
+        </motion.div>
+
         <motion.div
           className="relative mx-auto w-full max-w-[1120px] origin-bottom"
           style={still ? undefined : { rotateX: mockRotate, scale: mockScale, y: mockY, x: mockX }}
@@ -141,43 +164,30 @@ export function Hero() {
         >
           <motion.div style={still ? undefined : { rotateY: mockTiltY, rotateX: mockTiltX }} className="relative">
             <div className="module-glow absolute -inset-[3px] rounded-[22px] opacity-40 blur-xl" aria-hidden />
-            <div className="hidden md:block">
+            {/* contact shadow on the grass */}
+            <div
+              aria-hidden
+              className="absolute inset-x-[6%] -bottom-10 h-20 rounded-[50%] bg-black/80 blur-2xl"
+            />
+            <div className="relative hidden md:block">
               <ScaleToFit width={APP_W} height={APP_H}>
                 <AppWindow>
                   <LibraryScreen />
                 </AppWindow>
               </ScaleToFit>
             </div>
-            <div className="mx-auto w-[min(88vw,380px)] md:hidden">
+            <div className="relative mx-auto w-[min(88vw,380px)] md:hidden">
               <ScaleToFit width={PHONE_W} height={PHONE_H}>
                 <PhoneLibrary />
               </ScaleToFit>
             </div>
           </motion.div>
         </motion.div>
+        {/* room for the valley floor below the product */}
+        <div aria-hidden className="h-[clamp(110px,15vw,230px)]" />
       </div>
 
-      {/* Plane 3: near foreground, just clipping the product's bottom edge */}
-      <motion.div
-        className="pointer-events-none absolute inset-x-[-8%] -bottom-[2%] z-20 h-[15%] md:h-[18%]"
-        style={still ? undefined : { y: nearY, x: nearX }}
-        initial={{ opacity: 0, y: 80 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.8, ease: EASE, delay: 0.35 }}
-      >
-        <ArtSlot
-          asset={assets.heroForeground}
-          objectPosition="center 30%"
-          fallback={
-            <div className="relative h-full w-full">
-              <Ridge seed={41} height={500} base={0.5} amp={0.13} hills={0.9} octaves={2} roughness={0.3} points={200} top="#0a1f18" bottom="#020304" rim={0.45} className="absolute inset-0" />
-              <Ridge seed={57} height={500} base={0.68} amp={0.1} hills={1.4} octaves={2} roughness={0.3} points={200} top="#05110d" bottom="#020304" rim={0.22} className="absolute inset-0" />
-            </div>
-          }
-        />
-        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-b from-transparent to-[#020304]" />
-      </motion.div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-32 bg-gradient-to-b from-transparent to-[#020304]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-40 bg-gradient-to-b from-transparent to-[#020304]" />
     </section>
   )
 }

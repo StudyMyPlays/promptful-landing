@@ -65,8 +65,9 @@ export function Footer() {
       </div>
       <div aria-hidden className="pointer-events-none select-none overflow-hidden">
         <div className="container-x">
-          <div className="translate-y-[18%] text-center text-[clamp(64px,19vw,260px)] font-black leading-[0.8] tracking-[-0.06em] text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.06)]">
-            promptful<span className="[-webkit-text-stroke:1px_rgba(92,255,176,0.35)]">.</span>
+          <div className="translate-y-[18%] text-center text-[clamp(64px,19vw,260px)] font-black leading-[0.8] tracking-[-0.06em] text-transparent">
+            <span className="bg-gradient-to-b from-white/[0.07] to-white/0 bg-clip-text">promptful</span>
+            <span className="bg-gradient-to-b from-mint/40 to-mint/0 bg-clip-text">.</span>
           </div>
         </div>
       </div>
