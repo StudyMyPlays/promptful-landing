@@ -11,6 +11,7 @@ export const links = {
 
 export const navLinks = [
   { id: 'library', label: 'Library', href: '#library' },
+  { id: 'favorites', label: 'Favorites', href: '#favorites' },
   { id: 'reveal', label: 'How it works', href: '#reveal' },
   { id: 'chains', label: 'Chains', href: '#chains' },
   { id: 'pricing', label: 'Pricing', href: '#pricing' },

@@ -1,6 +1,8 @@
+import { ChainMetalDefs } from '@/components/mock/app'
 import { Bento } from '@/components/sections/bento'
 import { ChainStory } from '@/components/sections/chain-story'
 import { Faq } from '@/components/sections/faq'
+import { FavoritesSection } from '@/components/sections/favorites'
 import { FinalCta } from '@/components/sections/final-cta'
 import { Footer } from '@/components/sections/footer'
 import { Hero } from '@/components/sections/hero'
@@ -14,6 +16,7 @@ import { Showcase } from '@/components/sections/showcase'
 export default function Page() {
   return (
     <>
+      <ChainMetalDefs />
       <Nav />
       <main id="main" className="relative">
         <Hero />
@@ -21,6 +24,7 @@ export default function Page() {
           <Manifesto />
           <LogoMarquee />
           <Showcase />
+          <FavoritesSection />
           <RevealDemo />
           <ChainStory />
           <Bento />

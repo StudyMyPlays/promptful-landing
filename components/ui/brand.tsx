@@ -91,19 +91,3 @@ export function SectionPill({ children, className }: { children: React.ReactNode
     </span>
   )
 }
-
-export function UseCaseBadge({ label, glow, className }: { label: string; glow: string; className?: string }) {
-  return (
-    <span
-      className={cn('badge-shimmer inline-flex items-center rounded-md px-2 py-[3px] text-[10.5px] font-semibold', className)}
-      style={{
-        background: `linear-gradient(135deg, color-mix(in srgb, ${glow} 12%, #0a0a0a), color-mix(in srgb, ${glow} 22%, #0a0a0a), color-mix(in srgb, ${glow} 12%, #0a0a0a))`,
-        border: `1px solid color-mix(in srgb, ${glow} 40%, transparent)`,
-        color: `color-mix(in srgb, ${glow} 72%, white)`,
-        boxShadow: `0 0 10px color-mix(in srgb, ${glow} 22%, transparent)`,
-      }}
-    >
-      {label}
-    </span>
-  )
-}

@@ -11,8 +11,8 @@ const paragraphs = [
     highlight: ['production-ready', 'written', 'by', 'hand'],
   },
   {
-    text: 'When one prompt is not enough, chains string them into ordered, repeatable runs. You bring the work. The library brings the playbook.',
-    highlight: ['chains'],
+    text: 'Heart the ones that work and they wait on your shelf, one copy away. When one prompt is not enough, chains string them into ordered, repeatable runs. You bring the work. The library brings the playbook.',
+    highlight: ['shelf', 'chains'],
   },
 ]
 

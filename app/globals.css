@@ -471,6 +471,18 @@ body {
     opacity: 0;
   }
 }
+@keyframes chain-tag-swing {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(4deg);
+  }
+  75% {
+    transform: rotate(-4deg);
+  }
+}
 @keyframes star-twinkle {
   0%,
   100% {

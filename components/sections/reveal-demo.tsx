@@ -5,9 +5,8 @@ import { Check, Copy, Fingerprint, Lock, RotateCcw } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { SpotlightCard } from '@/components/motion/interactive'
 import { Reveal, SplitReveal } from '@/components/motion/primitives'
-import { UseCaseBadge } from '@/components/ui/brand'
+import { HarnessNote, UseCaseBadge } from '@/components/mock/atoms'
 import { cn } from '@/lib/cn'
-import { glowFor } from '@/lib/content'
 
 const HOLD_MS = 1400
 const TOTAL = 14
@@ -119,11 +118,8 @@ export function RevealDemo() {
         <Reveal y={40} className="relative">
           <SpotlightCard className="rounded-[22px] border border-white/[0.08] bg-[#0a0a0a] shadow-[0_40px_100px_-40px_rgba(0,0,0,.9)]">
             <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.06] px-5 py-4">
-              <UseCaseBadge label="Sales & Marketing" glow={glowFor('Sales & Marketing')} />
-              <span className="text-[11px] font-medium">
-                <span className="text-white/35">Use with </span>
-                <span className="text-[#7fcdb3]">ChatGPT Work</span>
-              </span>
+              <UseCaseBadge label="Sales & Marketing" />
+              <HarnessNote harness="ChatGPT Work" />
             </div>
             <div className="px-5 pt-5">
               <h3 className="text-[19px] font-semibold tracking-[-0.02em]">Landing Page Hero Rewriter</h3>
