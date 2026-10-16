@@ -2,12 +2,13 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { motion } from 'framer-motion'
-import { Heart, Newspaper, Play } from 'lucide-react'
+import { Newspaper, Play } from 'lucide-react'
 import { ProximityGroup, SpotlightCard } from '@/components/motion/interactive'
 import { EASE, Reveal, SplitReveal, Stagger, staggerItem } from '@/components/motion/primitives'
+import { UseCaseBadge } from '@/components/mock/atoms'
 import { MediaArt } from '@/components/mock/media-art'
 import { cn } from '@/lib/cn'
-import { harnesses, models, platforms, useCases } from '@/lib/content'
+import { harnesses, models, platforms, useCases, videoTypes } from '@/lib/content'
 
 function CardShell({ className, title, body, children }: { className?: string; title: string; body: string; children: React.ReactNode }) {
   return (
@@ -53,8 +54,8 @@ function UseCaseConstellation() {
 function FilterPanel() {
   const rows = [
     { k: 'Runs in', items: harnesses.slice(0, 3) },
-    { k: 'Model', items: models.slice(0, 3) },
-    { k: 'Built for', items: platforms.slice(0, 3) },
+    { k: 'Model', items: [models[1], models[2], models[8]] },
+    { k: 'Built for', items: [platforms[0], platforms[6], platforms[13]] },
   ]
   return (
     <div className="flex h-full flex-col justify-center gap-4 p-6">
@@ -97,32 +98,32 @@ function MediaMosaic() {
   )
 }
 
-function Favorites() {
-  const items = [
-    ['Production Code Review for Bugs and Vulnerabilities', '#3b82f6', 'Used 9×'],
-    ['Viral Content Hook Strategist [Long-Form]', '#a855f7', 'Used 6×'],
-    ['Terms of Service Generation', '#f59e0b', 'Used 4×'],
-  ]
+function VideoTypes() {
   return (
     <div className="flex h-full flex-col justify-center gap-2 p-6">
-      <div className="mb-1 flex items-center justify-between font-mono text-[9.5px] uppercase tracking-[0.14em] text-white/30">
-        <span>Most used</span>
-        <Heart className="size-3.5 fill-[#ff5a7a] text-[#ff5a7a]" />
+      <div className="mb-1 font-mono text-[9.5px] uppercase tracking-[0.14em] text-white/30">Video types</div>
+      <div className="flex flex-wrap gap-1.5">
+        {videoTypes.map((v, i) => (
+          <motion.span
+            key={v.label}
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.15 + i * 0.06 }}
+          >
+            <UseCaseBadge label={v.label} />
+          </motion.span>
+        ))}
       </div>
-      {items.map(([t, c, u], i) => (
-        <motion.div
-          key={t}
-          initial={{ opacity: 0, x: -16 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: EASE, delay: 0.2 + i * 0.1 }}
-          className="flex items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5"
-        >
-          <span className="size-1.5 shrink-0 rounded-full" style={{ background: c, boxShadow: `0 0 8px ${c}` }} />
-          <span className="truncate text-[12.5px] text-white/75">{t}</span>
-          <span className="ml-auto shrink-0 font-mono text-[9.5px] text-white/35">{u}</span>
-        </motion.div>
-      ))}
+      <div className="mt-3 flex items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.14em] text-white/30">
+        Built with
+        {['Remotion', 'Hyperframes'].map((n) => (
+          <span key={n} className="inline-flex items-center gap-1 rounded-md border border-white/[0.07] bg-white/[0.02] px-1.5 py-0.5 normal-case tracking-normal text-white/60">
+            <img src={n === 'Remotion' ? '/platforms/remotion.png' : '/platforms/hyperframes.svg'} alt="" className="size-3 object-contain" loading="lazy" />
+            {n}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }
@@ -130,9 +131,10 @@ function Favorites() {
 function KnowledgeLayer() {
   const rows = [
     ['Agents', 'Claude Co-Work', 'Rising'],
-    ['Video', 'Seedance 2.0', 'New'],
+    ['Video', 'Seedance 2.5', 'New'],
+    ['Model', 'Opus 5.5', 'New'],
     ['Research', 'Perplexity Comet', 'Steady'],
-    ['Image', 'GPT Image 2', 'Rising'],
+    ['Image', 'Image 2.5 Flare', 'Rising'],
   ]
   return (
     <div className="flex h-full flex-col justify-center p-6">
@@ -172,18 +174,18 @@ export function Bento() {
           <CardShell
             className="md:col-span-2 lg:col-span-4"
             title="Organised by the job, not the jargon."
-            body="Coding to household, legal to travel. Every card carries a use case with its own colour, so the library reads at a glance."
+            body="Twenty-two use cases, from coding and DevOps to parallax websites and travel. Every card carries one, in its own colour, so the library reads at a glance."
           >
             <UseCaseConstellation />
           </CardShell>
-          <CardShell className="lg:col-span-2" title="Filter by where it runs." body="Harness, model and platform. Narrow the whole library to the three you need.">
+          <CardShell className="lg:col-span-2" title="Filter by where it runs." body="Harness, model and platform, from Supabase to Remotion. Narrow the whole library to the three you need.">
             <FilterPanel />
           </CardShell>
-          <CardShell className="lg:col-span-2" title="Image & video, with receipts." body="Every media prompt ships with the output it made and the settings behind it.">
+          <CardShell className="lg:col-span-2" title="Motion Prompting, with receipts." body="Image and video prompts in one place, each shipped with the picture or clip it made.">
             <MediaMosaic />
           </CardShell>
-          <CardShell className="lg:col-span-2" title="Your go-to shelf." body="Heart what works. Most used and most recent, always one tap away.">
-            <Favorites />
+          <CardShell className="lg:col-span-2" title="Six kinds of motion." body="Every video card is filed by what it is: motion graphics, UGC, animation, 3D, VFX or product.">
+            <VideoTypes />
           </CardShell>
           <CardShell className="md:col-span-2 lg:col-span-2" title="Know what’s moving." body="The 2026 AI Tool Index and a weekly trend newsletter, included with Pro.">
             <KnowledgeLayer />

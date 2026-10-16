@@ -9,7 +9,7 @@ const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono'
 
 const title = 'Promptful | Curated. Validated. Yours.'
 const description =
-  'A curated library of production-ready prompts and chains, each tagged with the harness it runs in and the model it was tuned for. Reveal 14 free.'
+  'A curated library of production-ready prompts, chains and image and video prompts, each tagged with the harness it runs in and the model it was tuned for. Heart your favorites, reveal 14 free.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),

@@ -32,7 +32,7 @@ export function FinalCta() {
           lines={[['Your next great prompt'], [{ text: 'is one reveal away.', className: 'text-mint-gradient pb-[0.14em]' }]]}
         />
         <Reveal delay={0.15}>
-          <p className="lede mt-6 max-w-[480px]">Browse the whole library free. Reveal 14 prompts and 2 chains, and keep them for good.</p>
+          <p className="lede mt-6 max-w-[480px]">Browse the whole library free. Reveal 14 prompts and 2 chains, keep them for good, and put your 5 favorites one copy away.</p>
         </Reveal>
         <Reveal delay={0.25} className="mt-9 flex w-full max-w-[340px] flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row">
           <Magnetic className="w-full sm:w-auto">

@@ -1,145 +1,47 @@
 /**
  * Faithful recreations of the current Promptful app UI (be-promptful main):
- * app-sidebar, header + FreeUsageBar, prompt-card, chain-card,
- * image / video prompting. Rendered at a fixed design size and scaled
- * with <ScaleToFit>.
+ * app-sidebar, header + FreeUsageBar, prompt-card, the Favorites carousel
+ * and rails, chain-card with hanging step tags, and Motion Prompting.
+ * Rendered at a fixed design size and scaled with <ScaleToFit>.
  */
-/* eslint-disable @next/next/no-img-element */
 import {
   Activity,
   ArrowUpRight,
-  BarChart2,
-  Briefcase,
   ChevronDown,
   ChevronLeft,
-  ChevronRight,
   Clapperboard,
-  Code,
-  Copy,
   Crown,
-  DollarSign,
-  Eye,
-  FilePen,
   FileText,
-  GraduationCap,
-  Heart,
-  House,
   Image as ImageIcon,
-  Layers,
-  Lightbulb,
   Link2,
   Lock,
   LogOut,
-  MessageSquare,
-  Palette,
-  Plane,
+  MousePointerClick,
   Play,
-  Scale,
   Search,
-  Server,
   Settings,
-  Shield,
   SlidersHorizontal,
-  TrendingUp,
+  LifeBuoy,
   Video,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { featuredChain, glowFor, harnessColor, modelMeta, samplePrompts, type SamplePrompt } from '@/lib/content'
+import {
+  favoriteIds,
+  favoriteLimits,
+  featuredChain,
+  glowFor,
+  otherChains,
+  promptById,
+  recommendations,
+  type SamplePrompt,
+} from '@/lib/content'
+import { CopyDot, FavoriteDot, HarnessNote, HeartGlyph, ModelMarks, PlatformChips, PromptBody, RunsBadge, TagChip, UseCaseBadge, Wordmark, mix } from './atoms'
+import { FavoritesCoverflow } from './hologram'
 import { MediaArt } from './media-art'
 
 export const APP_W = 1200
 export const APP_H = 760
-
-const useCaseIcon: Record<string, LucideIcon> = {
-  Coding: Code,
-  'Sales & Marketing': TrendingUp,
-  'Content Creation': FilePen,
-  Security: Shield,
-  Backend: Server,
-  'Real-World Use Cases': Lightbulb,
-  'Data & Analytics': BarChart2,
-  Research: Search,
-  'UI/UX Design': Palette,
-  'Writing & Communication': MessageSquare,
-  'Legal & Compliance': Scale,
-  'Education & Learning': GraduationCap,
-  Finance: DollarSign,
-  'Video Editing': Clapperboard,
-  Household: House,
-  Business: Briefcase,
-  Travel: Plane,
-}
-
-const mix = (c: string, p: number, base = 'transparent') => `color-mix(in srgb, ${c} ${p}%, ${base})`
-
-/* ── Shared atoms ─────────────────────────────────────────── */
-function Wordmark({ size = 17 }: { size?: number }) {
-  return (
-    <span className="flex items-center gap-1.5">
-      <span className="font-black tracking-tight text-white" style={{ fontSize: size }}>
-        promptful<span className="text-mint">.</span>
-      </span>
-      <span className="rounded border border-white/[0.1] px-1 py-0.5 text-[7px] font-bold uppercase tracking-[0.08em] text-white/25">Beta</span>
-    </span>
-  )
-}
-
-function SquaresIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden>
-      <rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.4" stroke="currentColor" strokeWidth="1.4" />
-      <rect x="9" y="1.5" width="5.5" height="5.5" rx="1.4" stroke="currentColor" strokeWidth="1.4" />
-      <rect x="1.5" y="9" width="5.5" height="5.5" rx="1.4" stroke="currentColor" strokeWidth="1.4" />
-      <rect x="9" y="9" width="5.5" height="5.5" rx="1.4" stroke="currentColor" strokeWidth="1.4" />
-    </svg>
-  )
-}
-
-export function UseCaseBadge({ label, className }: { label: string; className?: string }) {
-  const glow = glowFor(label)
-  const Icon = useCaseIcon[label] ?? Code
-  return (
-    <span
-      className={cn('badge-shimmer inline-flex h-6 items-center gap-1 rounded-md border px-2 text-xs font-medium leading-none', className)}
-      style={{ background: mix(glow, 10), borderColor: mix(glow, 30), color: glow }}
-    >
-      <Icon className="size-3" />
-      {label}
-    </span>
-  )
-}
-
-function ModelChip({ model, extra = 0, size = 28 }: { model: string; extra?: number; size?: number }) {
-  const m = modelMeta[model]
-  if (!m) return null
-  return (
-    <span
-      className="relative inline-grid shrink-0 place-items-center rounded-full border p-1"
-      style={{ width: size, height: size, borderColor: mix(m.color, 35), background: mix(m.color, 12) }}
-    >
-      <img src={m.logo} alt="" className={cn('size-full object-contain', m.invert && 'invert')} />
-      {extra > 0 && (
-        <span className="absolute -bottom-1 -right-1.5 inline-flex h-3.5 min-w-3.5 items-center justify-center rounded-full border border-white/[0.15] bg-[#111] px-0.5 text-[8px] font-bold leading-none text-white/80">
-          +{extra}
-        </span>
-      )}
-    </span>
-  )
-}
-
-function RoundIcon({ children, active }: { children: React.ReactNode; active?: boolean }) {
-  return (
-    <span
-      className={cn(
-        'grid size-8 place-items-center rounded-full border backdrop-blur-sm',
-        active ? 'border-red-500/40 bg-red-500/10 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.22)]' : 'border-white/[0.1] bg-black/40 text-white/40',
-      )}
-    >
-      {children}
-    </span>
-  )
-}
 
 /* ── Window chrome ─────────────────────────────────────────── */
 export function AppWindow({ children, className, url = 'promptful.org' }: { children: React.ReactNode; className?: string; url?: string }) {
@@ -160,73 +62,79 @@ export function AppWindow({ children, className, url = 'promptful.org' }: { chil
 }
 
 /* ── Sidebar (components/layout/app-sidebar.tsx) ──────────── */
-type NavKey = 'library' | 'favorites' | 'image' | 'video' | 'chains'
-const navItems: { key: NavKey; label: string; Icon: LucideIcon }[] = [
-  { key: 'favorites', label: 'Favorites', Icon: Heart },
-  { key: 'image', label: 'Image Prompting', Icon: ImageIcon },
-  { key: 'video', label: 'Video Prompting', Icon: Video },
+type NavKey = 'library' | 'favorites' | 'motion' | 'chains'
+type IconLike = (props: { className?: string }) => React.ReactNode
+const browse: { key: NavKey; label: string; Icon: IconLike }[] = [
+  { key: 'favorites', label: 'Favorites', Icon: HeartIcon },
+  { key: 'motion', label: 'Motion Prompting', Icon: Clapperboard },
   { key: 'chains', label: 'Prompt Chains', Icon: Link2 },
 ]
+
+function HeartIcon({ className }: { className?: string }) {
+  return <HeartGlyph size={16} className={className} />
+}
+
+function GroupLabel({ children }: { children: React.ReactNode }) {
+  return <div className="px-2.5 pb-1.5 pt-0.5 text-[9.5px] font-medium uppercase tracking-[0.26em] text-white/35">{children}</div>
+}
+
+function Item({ Icon, label, active, badge, danger }: { Icon: IconLike; label: string; active?: boolean; badge?: number; danger?: boolean }) {
+  return (
+    <div
+      className={cn(
+        'relative flex items-center gap-3 rounded-lg border px-2.5 py-2 text-[13px] tracking-[0.02em]',
+        active ? 'border-white/[0.08] bg-white/[0.04] font-medium text-white/90' : 'border-transparent text-white/60',
+        danger && 'text-white/55',
+      )}
+    >
+      <Icon className={cn('size-4 shrink-0', active ? 'text-primary/90' : 'text-white/55')} />
+      <span className="flex-1">{label}</span>
+      {badge ? (
+        <span className="tabular inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.06] px-1.5 text-[11px] font-bold text-white/80">{badge}</span>
+      ) : null}
+    </div>
+  )
+}
 
 export function Sidebar({ active }: { active: NavKey }) {
   return (
     <aside className="flex h-full w-[220px] shrink-0 flex-col bg-surface shadow-[inset_-1px_0_0_rgba(255,255,255,0.05)]">
-      <div className="flex h-14 items-center justify-between border-b border-white/[0.05] px-3">
-        <Wordmark />
-        <ChevronLeft className="size-4 text-white/20" />
-      </div>
-      <div className="px-3 pb-3 pt-3">
-        <div
-          className={cn(
-            'flex w-full items-center gap-3 rounded-lg border px-3 py-2.5',
-            active === 'library' ? 'border-primary/30 bg-white/[0.05]' : 'border-white/[0.08] bg-white/[0.02]',
-          )}
-        >
-          <SquaresIcon className="size-4 text-primary/70" />
-          <span className="text-[12px] font-bold uppercase tracking-[0.04em] text-white/85">Library</span>
+      <div className="border-b border-white/[0.05]">
+        <div className="flex h-14 items-center justify-between px-3">
+          <Wordmark />
+          <ChevronLeft className="size-4 text-white/50" />
+        </div>
+        <div className="px-3 pb-3">
+          <div className={cn('flex w-full items-center gap-3 rounded-lg border px-3 py-2.5', active === 'library' ? 'border-primary/30 bg-white/[0.05]' : 'border-white/[0.08] bg-white/[0.02]')}>
+            <svg className="size-4 text-primary/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            <span className="text-[13px] font-medium tracking-[0.02em] text-white/85">Library</span>
+          </div>
         </div>
       </div>
-      <nav className="space-y-0.5 px-2 py-3">
-        {navItems.map(({ key, label, Icon }) => (
-          <div
-            key={key}
-            className={cn(
-              'relative flex items-center gap-3 rounded-lg px-2.5 py-2 text-[11px] font-semibold uppercase tracking-[0.04em]',
-              active === key ? 'border border-white/[0.08] bg-white/[0.04] text-white/90' : 'text-white/60',
-            )}
-          >
-            <Icon className={cn('size-4', active === key ? 'text-primary/90' : 'text-white/45')} />
-            {label}
-            {key === 'favorites' && (
-              <span className="ml-auto grid h-[18px] min-w-[18px] place-items-center rounded-full border border-red-500/20 bg-red-500/20 px-1 text-[10px] font-bold text-red-400">
-                12
-              </span>
-            )}
-          </div>
+      <nav className="flex-1 space-y-0.5 px-2 py-3">
+        <GroupLabel>Browse</GroupLabel>
+        {browse.map(({ key, label, Icon }) => (
+          <Item key={key} Icon={Icon} label={label} active={active === key} badge={key === 'favorites' ? favoriteIds.length : undefined} />
         ))}
       </nav>
-      <div className="mt-auto">
-        <div className="px-2 pb-1">
-          <div className="flex w-full items-center gap-2 rounded-lg border border-mint/20 bg-mint/[0.06] px-2.5 py-2">
-            <Crown className="size-4 text-mint" />
-            <span className="text-[11px] font-bold tracking-[0.04em] text-mint">UPGRADE TO PRO</span>
-            <ArrowUpRight className="ml-auto size-3.5 text-mint/60" />
-          </div>
+      <div className="px-2 pb-1">
+        <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/[0.06] px-2.5 py-2">
+          <Crown className="size-4 text-primary" />
+          <span className="flex-1 text-[13px] font-medium tracking-[0.02em] text-primary">Upgrade to Pro</span>
+          <ArrowUpRight className="size-3.5 text-primary/60" />
         </div>
-        <div className="mx-3 my-2 border-t border-white/[0.05]" />
-        <div className="space-y-0.5 px-2 pb-3">
-          {[
-            ['Settings', Settings],
-            ['Sign out', LogOut],
-          ].map(([l, I]) => {
-            const Ic = I as LucideIcon
-            return (
-              <div key={l as string} className="flex items-center gap-3 px-2.5 py-2 text-[11px] font-semibold uppercase tracking-[0.04em] text-white/45">
-                <Ic className="size-4" /> {l as string}
-              </div>
-            )
-          })}
-        </div>
+      </div>
+      <div className="mx-3 border-t border-white/[0.05]" />
+      <div className="space-y-0.5 px-2 py-3">
+        <GroupLabel>Account</GroupLabel>
+        <Item Icon={LifeBuoy} label="Help" />
+        <Item Icon={Settings} label="Settings" />
+        <Item Icon={LogOut} label="Sign out" danger />
       </div>
     </aside>
   )
@@ -236,16 +144,16 @@ export function Sidebar({ active }: { active: NavKey }) {
 function Meter({ Icon, label, used, total, className }: { Icon: LucideIcon; label: string; used: number; total: number; className?: string }) {
   return (
     <div className={cn('flex min-w-0 items-center gap-2', className)}>
-      <Icon className="size-3.5 shrink-0 text-white/35" />
-      <span className="text-[11px] text-white/55">{label}</span>
+      <Icon className="size-3.5 shrink-0 text-white/50" />
+      <span className="text-[11px] font-medium text-white/55">{label}</span>
       <div className="flex flex-1 gap-[3px]">
         {Array.from({ length: total }, (_, i) => (
           <span key={i} className={cn('h-1.5 flex-1 rounded-full', i < used ? 'bg-primary shadow-[0_0_8px_rgba(92,255,176,0.35)]' : 'bg-white/[0.08]')} />
         ))}
       </div>
-      <span className="tabular shrink-0 text-[11px] text-white/70">
+      <span className="tabular shrink-0 text-[11px] font-semibold text-white/70">
         {used}
-        <span className="text-white/30">/{total}</span>
+        <span className="text-white/50">/{total}</span>
       </span>
     </div>
   )
@@ -254,11 +162,11 @@ function Meter({ Icon, label, used, total, className }: { Icon: LucideIcon; labe
 export function UsageBar({ used = 5, className }: { used?: number; className?: string }) {
   return (
     <div className={cn('flex items-center gap-5 rounded-xl border border-white/[0.06] bg-white/[0.02] py-1.5 pl-3 pr-1.5', className)}>
-      <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">Free plan</span>
+      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/50">Free plan</span>
       <Meter Icon={FileText} label="Prompts" used={used} total={14} className="max-w-[260px] flex-[7]" />
       <Meter Icon={Link2} label="Chains" used={1} total={2} className="max-w-[150px] flex-[3]" />
-      <span className="ml-auto flex h-8 items-center gap-1 rounded-lg border border-primary/20 bg-primary/[0.06] px-2.5 text-[11px] font-bold text-primary">
-        <Crown className="size-3.5" /> Upgrade <ArrowUpRight className="size-3" />
+      <span className="ml-auto flex h-8 items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/[0.06] px-2.5 text-[11px] font-bold tracking-[0.03em] text-primary">
+        <Crown className="size-3.5" /> Upgrade <ArrowUpRight className="size-3 opacity-60" />
       </span>
     </div>
   )
@@ -269,96 +177,13 @@ export function UsageMeter({ used = 5, className }: { used?: number; className?:
   return (
     <div className={cn('space-y-2 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3', className)}>
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">Free plan</span>
+        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/50">Free plan</span>
         <span className="flex items-center gap-1 text-[11px] font-bold text-primary">
           <Crown className="size-3.5" /> Upgrade
         </span>
       </div>
       <Meter Icon={FileText} label="Prompts" used={used} total={14} />
       <Meter Icon={Link2} label="Chains" used={1} total={2} />
-    </div>
-  )
-}
-
-/* ── Prompt card (components/prompts/prompt-card.tsx) ─────── */
-const ghostWidths = [92, 78, 86, 64, 90, 72, 81]
-
-export function PromptCard({ p, locked = false, hover = false, favorite = false, className }: { p: SamplePrompt; locked?: boolean; hover?: boolean; favorite?: boolean; className?: string }) {
-  const glow = glowFor(p.useCase)
-  const hColor = harnessColor[p.harness] ?? '#5cffb0'
-  return (
-    <div
-      className={cn('relative flex h-[360px] flex-col overflow-hidden rounded-xl border bg-card', className)}
-      style={
-        hover
-          ? { background: mix(glow, 8, 'var(--color-card)'), borderColor: mix(glow, 45), boxShadow: `0 0 18px ${mix(glow, 22)}` }
-          : p.chain
-            ? { borderColor: 'color-mix(in srgb, var(--color-primary) 40%, transparent)' }
-            : { borderColor: 'color-mix(in srgb, var(--color-border) 40%, transparent)' }
-      }
-    >
-      <div className="px-5 pb-2.5 pt-5">
-        <div className="mb-2.5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5">
-              <ModelChip model={p.model} extra={p.additionalModels?.length ?? 0} />
-              <UseCaseBadge label={p.useCase} />
-            </div>
-            <span className="inline-flex h-7 items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2 text-sm font-semibold text-muted-foreground">
-              <Activity className="size-3.5" />
-              {p.runs.toLocaleString('en-US')}
-            </span>
-          </div>
-          <div className="ml-[34px] mt-1.5 text-[11px] font-medium leading-none">
-            <span className="text-white/35">Use with </span>
-            <span style={{ color: mix(hColor, 55, 'white') }}>{p.harness}</span>
-          </div>
-        </div>
-        <div className="flex items-start gap-2">
-          <div className="line-clamp-2 flex-1 text-lg font-semibold leading-snug text-white">{p.title}</div>
-          {p.chain && (
-            <span className="mt-1 grid size-5 shrink-0 place-items-center rounded-full border border-primary/20 bg-primary/10">
-              <Link2 className="size-3 text-primary" />
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden px-5 pb-4">
-        {locked ? (
-          <div className="relative flex-1">
-            <div className="space-y-2.5 pt-1 blur-[3px]">
-              {ghostWidths.map((w, i) => (
-                <div key={i} className="h-2.5 rounded-full bg-white/[0.07]" style={{ width: `${w}%` }} />
-              ))}
-            </div>
-            <div className="absolute inset-0 grid place-items-center">
-              <span className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/[0.1] bg-black/60 px-3 text-[11px] font-semibold text-white/70 backdrop-blur-sm">
-                <Eye className="size-3.5 text-primary" /> Tap to reveal
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 space-y-1.5 overflow-hidden text-sm leading-relaxed text-muted-foreground">
-            {p.body.map((l, i) => (
-              <p key={i}>{l}</p>
-            ))}
-          </div>
-        )}
-        <div className="flex flex-wrap gap-1">
-          {p.tags.map((t) => (
-            <span key={t} className="inline-flex h-5 items-center gap-0.5 rounded-[3px] border border-white/[0.08] bg-white/[0.05] px-1.5 text-[10px] font-medium capitalize tracking-wide text-white/60">
-              <span className="text-white/35">#</span>
-              {t}
-            </span>
-          ))}
-        </div>
-        <div className="mt-auto flex items-center justify-between">
-          <RoundIcon active={favorite}>
-            <Heart className={cn('size-3.5', favorite && 'fill-current')} />
-          </RoundIcon>
-          <RoundIcon>{locked ? <Lock className="size-3.5" /> : <Copy className="size-3.5" />}</RoundIcon>
-        </div>
-      </div>
     </div>
   )
 }
@@ -375,9 +200,80 @@ function Header() {
   )
 }
 
+/* ── Prompt card (components/prompts/prompt-card.tsx) ─────── */
+const ghostWidths = [92, 78, 86, 64, 90, 72, 81]
+
+export function PromptCard({ p, locked = false, hover = false, favorite = false, className }: { p: SamplePrompt; locked?: boolean; hover?: boolean; favorite?: boolean; className?: string }) {
+  const glow = glowFor(p.useCase)
+  return (
+    <div
+      className={cn('relative flex h-[360px] flex-col overflow-hidden rounded-xl border bg-card', className)}
+      style={
+        hover
+          ? { background: mix(glow, 8, 'var(--color-card)'), borderColor: mix(glow, p.chain ? 55 : 45), boxShadow: `0 0 18px ${mix(glow, 22)}` }
+          : p.chain
+            ? { borderColor: 'color-mix(in srgb, var(--color-primary) 40%, transparent)', boxShadow: `0 0 16px ${mix(glow, 28)}` }
+            : { borderColor: 'color-mix(in srgb, var(--color-border) 40%, transparent)' }
+      }
+    >
+      <div className="px-5 pb-3 pt-5">
+        <div className="flex h-7 items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <ModelMarks model={p.model} extra={p.additionalModels?.length ?? 0} />
+            <UseCaseBadge label={p.useCase} className="shrink" />
+          </div>
+          <RunsBadge count={p.runs} />
+        </div>
+        <div className="mt-3 flex items-start gap-2">
+          <div className="line-clamp-2 flex-1 text-balance text-[16px] font-semibold leading-[1.3] tracking-[-0.01em] text-white/95">{p.title}</div>
+          {p.chain && (
+            <span className="mt-px grid size-5 shrink-0 place-items-center rounded-full border border-primary/20 bg-primary/10">
+              <Link2 className="size-2.5 text-primary/60" />
+            </span>
+          )}
+        </div>
+        <HarnessNote harness={p.harness} className="mt-1.5" />
+      </div>
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-5 pb-4">
+        <div className="min-h-0 flex-1 overflow-hidden">
+          {locked ? (
+            <div className="relative h-full">
+              <div className="space-y-2.5 pt-1 blur-[3px]">
+                {ghostWidths.map((w, i) => (
+                  <div key={i} className="h-2.5 rounded-full bg-white/[0.07]" style={{ width: `${w}%` }} />
+                ))}
+              </div>
+              <div className="absolute inset-0 grid place-items-center">
+                <span className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/[0.1] bg-black/60 px-3 text-[11px] font-semibold text-white/70 backdrop-blur-sm">
+                  <Lock className="size-3.5 text-primary" /> Hold to reveal
+                </span>
+              </div>
+            </div>
+          ) : (
+            <PromptBody lines={p.body} className="text-[13.5px] leading-[1.6] text-white/60 [mask-image:linear-gradient(to_bottom,black_75%,transparent)]" />
+          )}
+        </div>
+        <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+          {p.tags.slice(0, 3).map((t) => (
+            <TagChip key={t} tag={t} />
+          ))}
+          {p.tags.length > 3 && <span className="inline-flex h-6 items-center rounded-md border border-white/[0.07] bg-white/[0.04] px-2 text-[11px] text-white/55">+{p.tags.length - 3}</span>}
+        </div>
+        <div className="mt-auto flex shrink-0 items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <FavoriteDot on={favorite} />
+            <PlatformChips names={p.platforms} max={3} named />
+          </div>
+          <CopyDot locked={locked} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ── Screens ───────────────────────────────────────────────── */
 export function LibraryScreen({ compact = false }: { compact?: boolean }) {
-  const list = compact ? samplePrompts.slice(0, 2) : samplePrompts.slice(0, 3)
+  const ids = compact ? ['code-review', 'market'] : ['code-review', 'market', 'parallax']
   return (
     <div className="flex h-full">
       {!compact && <Sidebar active="library" />}
@@ -394,8 +290,8 @@ export function LibraryScreen({ compact = false }: { compact?: boolean }) {
             <span className="font-semibold text-foreground">42</span> prompts
           </p>
           <div className={cn('grid gap-4', compact ? 'grid-cols-2' : 'grid-cols-3')}>
-            {list.map((p, i) => (
-              <PromptCard key={p.title} p={p} hover={i === 0} favorite={i === 0} locked={i === 1} />
+            {ids.map((id, i) => (
+              <PromptCard key={id} p={promptById(id)} hover={i === 0} favorite={i === 0 || id === 'parallax'} locked={i === 1} />
             ))}
           </div>
         </div>
@@ -404,284 +300,385 @@ export function LibraryScreen({ compact = false }: { compact?: boolean }) {
   )
 }
 
-export function DetailScreen({ compact = false }: { compact?: boolean }) {
-  const p = samplePrompts[0]
-  const hColor = harnessColor[p.harness]
+/* ── Favorites (components/prompts/favorites-view.tsx) ─────── */
+export function FavoritesMeter({ count = favoriteIds.length, limit = favoriteLimits.free }: { count?: number; limit?: number }) {
   return (
-    <div className="relative flex h-full">
-      {!compact && <Sidebar active="library" />}
-      <div className="relative flex-1 overflow-hidden">
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="absolute inset-5 flex overflow-hidden rounded-2xl border border-white/[0.08] bg-surface shadow-2xl">
-          <div className="flex w-[55%] flex-col border-r border-white/[0.06] p-6">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">Prompt</span>
-              <RoundIcon>
-                <Copy className="size-3.5" />
-              </RoundIcon>
-            </div>
-            <div className="mt-4 space-y-3 text-[13px] leading-[1.7] text-white/70">
-              <p className="font-semibold text-white/90">Role</p>
-              <p>You are a staff engineer doing a pre-merge review of a production codebase. You care about users more than style.</p>
-              <p className="font-semibold text-white/90">Process</p>
-              <p>1. Read the diff end to end before commenting.
-                <br />2. Trace every changed path to its callers.
-                <br />3. Rank findings by blast radius, not by line order.</p>
-              <p className="font-semibold text-white/90">Output</p>
-              <p>A table of severity, file, failure scenario and fix. No praise. No nits unless they hide a bug.</p>
-            </div>
-          </div>
-          <div className="flex flex-1 flex-col p-6">
-            <div className="flex items-center gap-1.5">
-              <ModelChip model={p.model} extra={p.additionalModels?.length ?? 0} />
-              <UseCaseBadge label={p.useCase} />
-            </div>
-            <div className="mt-4 text-[20px] font-semibold leading-tight tracking-[-0.02em]">{p.title}</div>
-            <div className="mt-2 text-[11px] font-medium">
-              <span className="text-white/35">Use with </span>
-              <span style={{ color: mix(hColor, 55, 'white') }}>{p.harness}</span>
-            </div>
-            <div className="mt-5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5">
-              <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">When to use it</div>
-              <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/60">Before merging anything that touches auth, billing or data writes.</p>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {[
-                ['AI models', 'Fable 3.1, Astra, Gemini 3.8'],
-                ['Runs', '1,284'],
-                ['Your runs', '3'],
-                ['Added', 'Sep 2026'],
-              ].map(([k, v]) => (
-                <div key={k} className="rounded-lg border border-white/[0.06] bg-white/[0.015] px-3 py-2">
-                  <div className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-white/30">{k}</div>
-                  <div className="mt-0.5 truncate text-[12px] font-medium text-white/80">{v}</div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-auto flex items-center justify-between pt-4">
-              <RoundIcon active>
-                <Heart className="size-3.5 fill-current" />
-              </RoundIcon>
-              <span className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-4 text-[12px] font-bold text-ink">
-                <Copy className="size-3.5" /> Copy prompt
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const lockedBars = [72, 58, 84, 64, 77, 52]
-
-export function ChainCard({ locked = false, className }: { locked?: boolean; className?: string }) {
-  const c = featuredChain
-  const glow = glowFor(c.useCase)
-  return (
-    <div className={cn('relative pb-2.5', className)} style={{ ['--uc-glow' as string]: glow }}>
-      <div className="absolute inset-x-6 bottom-0 h-6 rounded-b-xl border border-t-0 border-white/[0.05]" style={{ background: mix(glow, 3, 'var(--color-card)') }} />
-      <div className="absolute inset-x-3 bottom-[5px] h-6 rounded-b-xl border border-t-0 border-white/[0.07]" style={{ background: mix(glow, 5, 'var(--color-card)') }} />
-      <div
-        className="relative flex h-[360px] flex-col overflow-hidden rounded-xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_24px_-14px_rgba(0,0,0,0.7)]"
-        style={{ borderColor: mix(glow, 16, 'rgba(255,255,255,0.06)'), background: `linear-gradient(160deg, ${mix(glow, 7, 'var(--color-card)')} 0%, var(--color-card) 42%)` }}
-      >
-        <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${mix(glow, 70)}, transparent)` }} />
-        <div className="px-5 pt-5">
-          <div className="flex items-center justify-between">
-            <span className="grid size-7 place-items-center rounded-full border border-primary/25 bg-primary/10">
-              <Link2 className="size-3.5 text-primary" />
-            </span>
-            <UseCaseBadge label={c.useCase} />
-          </div>
-          <div className="mt-3.5 line-clamp-2 text-[17px] font-semibold leading-snug tracking-tight text-white/95">{c.name}</div>
-          <div className="mt-1 line-clamp-2 text-[13px] text-white/45">{c.description}</div>
-        </div>
-        <div className="relative mt-4 flex-1 overflow-hidden px-5 pb-3 [mask-image:linear-gradient(to_bottom,black_88%,transparent)]">
-          <span className="absolute bottom-3 left-[29.5px] top-0 w-px" style={{ background: `linear-gradient(${mix(glow, 45)}, rgba(255,255,255,0.06))` }} />
-          <div className="space-y-2">
-            {c.steps.map((s, i) => (
-              <div key={s.title} className="relative flex h-6 items-center gap-3">
-                <span
-                  className="relative grid size-5 shrink-0 place-items-center rounded-full border bg-card text-[10px] font-semibold"
-                  style={{ borderColor: mix(glow, 45), color: mix(glow, 80, 'white') }}
-                >
-                  {i + 1}
-                </span>
-                {locked ? (
-                  <span className="h-2.5 rounded-full bg-white/[0.09] blur-[2px]" style={{ width: `${lockedBars[i % lockedBars.length]}%` }} />
-                ) : (
-                  <span className="truncate text-[13px] text-white/60">{s.title}</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex h-12 items-center gap-1.5 border-t border-white/[0.05] pl-5 pr-3">
-          {['/platforms/claude-color.webp', '/platforms/openai.webp'].map((l) => (
-            <span key={l} className="grid size-6 place-items-center rounded-full border border-white/[0.08] bg-white/[0.03] p-1">
-              <img src={l} alt="" className="size-full object-contain" />
-            </span>
-          ))}
-          <span
-            className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-full border pl-2 pr-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-            style={{ borderColor: mix(glow, 28, 'rgba(255,255,255,0.08)'), background: mix(glow, 9, 'rgba(255,255,255,0.02)') }}
-          >
-            {locked ? <Lock className="size-3 text-white/60" /> : <Layers className="size-3.5 text-white/60" />}
-            <span className="tabular text-[12px] font-semibold text-white/85">{c.steps.length}</span>
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export function ChainScreen({ copied = 3, compact = false }: { copied?: number; compact?: boolean }) {
-  const c = featuredChain
-  const current = Math.min(copied, c.steps.length - 1)
-  return (
-    <div className="flex h-full">
-      {!compact && <Sidebar active="chains" />}
-      <div className="flex min-w-0 flex-1 gap-5 p-6">
-        {!compact && (
-          <div className="w-[300px] shrink-0">
-            <div className="mb-5 text-2xl font-bold tracking-tight">Prompt Chains</div>
-            <ChainCard />
-          </div>
-        )}
-        <div className="flex min-w-0 flex-1 flex-col rounded-2xl border border-white/[0.07] bg-surface p-5">
-          <div className="flex items-center gap-2.5">
-            <span className="grid size-7 place-items-center rounded-full border border-primary/25 bg-primary/10">
-              <Link2 className="size-3.5 text-primary" />
-            </span>
-            <div className="min-w-0">
-              <div className="truncate text-[15px] font-semibold">{c.name}</div>
-              <div className="text-[11px] text-white/40">
-                {c.steps.length} steps · <span className="text-primary">{copied}/{c.steps.length} copied</span>
-              </div>
-            </div>
-            <span className="ml-auto flex h-8 items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 text-[11px] font-semibold text-white/60">
-              <Copy className="size-3.5" /> Copy all
-            </span>
-          </div>
-          <div className="mt-5 flex min-h-0 flex-1 gap-5">
-            <div className="w-[230px] shrink-0 space-y-1">
-              {c.steps.map((s, i) => (
-                <div key={s.title} className={cn('flex items-center gap-2.5 rounded-lg px-2 py-1.5', i === current && 'bg-white/[0.04]')}>
-                  <span
-                    className={cn(
-                      'grid size-5 shrink-0 place-items-center rounded-full border text-[10px] font-semibold',
-                      i < copied ? 'border-primary bg-primary text-ink' : i === current ? 'border-primary text-primary' : 'border-white/15 text-white/40',
-                    )}
-                  >
-                    {i + 1}
-                  </span>
-                  <span className={cn('truncate text-[12px]', i === current ? 'text-white' : 'text-white/45')}>{s.title}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex min-w-0 flex-1 flex-col">
-              <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary/80">
-                Step {current + 1} of {c.steps.length}
-              </div>
-              <div className="mt-1.5 text-[16px] font-semibold">{c.steps[current].title}</div>
-              <div className="mt-3 flex-1 space-y-2 text-[13px] leading-relaxed text-white/60">
-                <p>{c.steps[current].note}</p>
-                <p>Work through the codebase in order. After each pass, write a short changelog so the next step starts from a known state.</p>
-              </div>
-              <div className="flex items-center gap-2 border-t border-white/[0.06] pt-4">
-                <span className="flex h-8 items-center gap-1 rounded-lg border border-white/[0.08] px-3 text-[11px] text-white/60">
-                  <ChevronLeft className="size-3.5" /> Back
-                </span>
-                <span className="mx-auto flex h-8 items-center gap-1.5 rounded-lg bg-primary px-4 text-[11px] font-bold text-ink">
-                  <Copy className="size-3.5" /> Copy
-                </span>
-                <span className="flex h-8 items-center gap-1 rounded-lg border border-white/[0.08] px-3 text-[11px] text-white/60">
-                  Next <ChevronRight className="size-3.5" />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export function MediaScreen({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className="flex h-full">
-      {!compact && <Sidebar active="image" />}
-      <div className="flex min-w-0 flex-1 flex-col gap-6 overflow-hidden p-6">
-        <div>
-          <div className="text-2xl font-bold tracking-tight">Image Prompting</div>
-          <div className="mt-1 text-[13px] text-white/35">Image generation prompts. Add new ones from the Library.</div>
-        </div>
-        <div>
-          <SectionLabel name="Landscape" ratio="16:9" count={3} />
-          <div className="mt-3 flex h-[210px] gap-2">
-            <ImageCard k="synthwave" title="Retro Synthwave Skyline" model="GPT Image 2" className="flex-[2.2]" expanded />
-            <ImageCard k="clockwork" title="Steampunk Clockwork" model="Nano Banana Pro" className="flex-1" />
-            <ImageCard k="glassIcon" title="Glass App Icon" model="GPT Image 2" className="flex-1" />
-          </div>
-        </div>
-        <div className="grid min-h-0 flex-1 grid-cols-[1fr_1.4fr] gap-4">
-          <div>
-            <SectionLabel name="Square" ratio="1:1" count={2} />
-            <div className="mt-3 flex h-[calc(100%-26px)] gap-2">
-              <ImageCard k="ceramicMug" title="Ceramic Mug Product Shot" model="Nano Banana Pro" className="flex-1" />
-            </div>
-          </div>
-          <VideoCard />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function SectionLabel({ name, ratio, count }: { name: string; ratio: string; count: number }) {
-  return (
-    <div className="flex items-baseline gap-2">
-      <span className="text-[10px] font-semibold uppercase tracking-widest text-white/25">{name}</span>
-      <span className="font-mono text-[10px] text-white/15">{ratio}</span>
-      <span className="text-[10px] text-white/20">· {count}</span>
-    </div>
-  )
-}
-
-function ImageCard({ k, title, model, className, expanded }: { k: Parameters<typeof MediaArt>[0]['k']; title: string; model: string; className?: string; expanded?: boolean }) {
-  const m = modelMeta[model]
-  return (
-    <div className={cn('relative overflow-hidden rounded-2xl border border-white/[0.08] bg-black', className)}>
-      <MediaArt k={k} className="absolute inset-0" />
-      <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/50 to-transparent" />
-      <span className="absolute left-2.5 top-2.5 grid size-8 place-items-center rounded-full border p-1.5 backdrop-blur-md" style={{ borderColor: mix(m.color, 35), background: mix(m.color, 14) }}>
-        <img src={m.logo} alt="" className={cn('size-full object-contain', m.invert && 'invert')} />
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
+      <span className={cn('tabular font-mono', count >= limit ? 'text-red-400/80' : 'text-white/55')}>
+        {count} / {limit} favorites
       </span>
-      {expanded && (
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent px-3 pb-3 pt-10">
-          <span className="inline-flex h-5 items-center rounded-md border border-pink-400/40 bg-pink-500/15 px-1.5 text-[10px] font-medium text-pink-300">Image Gen</span>
-          <div className="mt-1.5 line-clamp-2 text-sm font-semibold text-white">{title}</div>
+      <span className="font-medium text-primary/80">Upgrade to keep up to {favoriteLimits.pro}</span>
+    </div>
+  )
+}
+
+export function Rail({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
+  return (
+    <section className={cn('min-w-0 rounded-lg border border-white/[0.07] bg-white/[0.02] p-4', className)}>
+      <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-white/55">{title}</h4>
+      <div className="space-y-1">{children}</div>
+    </section>
+  )
+}
+
+export function RailRow({ title, subtitle, meta, highlight }: { title: string; subtitle?: string; meta?: React.ReactNode; highlight?: boolean }) {
+  return (
+    <div className={cn('flex items-center gap-1 rounded', highlight && 'bg-white/[0.04]')}>
+      <div className="min-w-0 flex-1 px-2 py-1.5">
+        <span className={cn('line-clamp-1 block text-[12px]', highlight ? 'text-white' : 'text-white/60')}>{title}</span>
+        {subtitle && <span className="mt-0.5 block truncate text-[11px] text-white/50">{subtitle}</span>}
+      </div>
+      <div className="flex shrink-0 items-center gap-1.5 pr-1 text-[12px]">
+        {meta}
+        <CopyDot />
+      </div>
+    </div>
+  )
+}
+
+export function FavoriteRails({ className }: { className?: string }) {
+  const favs = favoriteIds.map(promptById)
+  const mostUsed = [...favs].sort((a, b) => (b.yourRuns ?? 0) - (a.yourRuns ?? 0)).slice(0, 3)
+  return (
+    <div className={cn('grid grid-cols-3 gap-4', className)}>
+      <Rail title="Most Used">
+        {mostUsed.map((p, i) => (
+          <RailRow
+            key={p.id}
+            title={p.title}
+            highlight={i === 0}
+            meta={
+              <span className="inline-flex items-center gap-1 text-white/50">
+                <Activity className="size-3" />
+                {p.yourRuns}
+              </span>
+            }
+          />
+        ))}
+      </Rail>
+      <Rail title="Most Recent">
+        {[...favs].reverse().slice(0, 3).map((p) => (
+          <RailRow key={p.id} title={p.title} />
+        ))}
+      </Rail>
+      <Rail title="Because You Favorited">
+        {recommendations.map((r) => (
+          <RailRow key={r.title} title={r.title} subtitle={`Because you favorited ${r.because}`} meta={<FavoriteDot />} />
+        ))}
+      </Rail>
+    </div>
+  )
+}
+
+export function FavoritesScreen({ compact = false, autoplay = 0 }: { compact?: boolean; autoplay?: number }) {
+  return (
+    <div className="flex h-full">
+      {!compact && <Sidebar active="favorites" />}
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <Header />
+        <div className="relative min-h-0 flex-1 overflow-hidden px-6 pt-5 [mask-image:linear-gradient(to_bottom,black_86%,transparent)]">
+          <FavoritesMeter />
+          <FavoritesCoverflow cardW={compact ? 210 : 222} autoplay={autoplay} className="mt-4" />
+          <FavoriteRails className="mt-6" />
         </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Chains (components/prompts/chain-card.tsx + chain-depth.tsx) ── */
+const DROPS: [number, number][] = [
+  [10, 26],
+  [16, 40],
+  [12, 32],
+  [18, 46],
+  [11, 30],
+  [15, 38],
+  [13, 34],
+]
+
+function LinkRun({ length }: { length: number }) {
+  const w = 9
+  const L = 15
+  const sw = 2.1
+  const pitch = L - 2 * sw - 2.5
+  const count = Math.ceil(length / pitch) + 1
+  const cx = w / 2 + 1
+  const faces: React.ReactNode[] = []
+  const edges: React.ReactNode[] = []
+  for (let k = 0; k < count; k++) {
+    const y = k * pitch - 2
+    if (k % 2 === 0) faces.push(<rect key={k} x={cx - w / 2 + sw / 2} y={y + sw / 2} width={w - sw} height={L - sw} rx={(w - sw) / 2} fill="none" stroke="url(#chain-metal)" strokeWidth={sw} />)
+    else edges.push(<rect key={k} x={cx - 1.7} y={y} width={3.4} height={L} rx={1.7} fill="url(#chain-metal)" stroke="rgba(0,0,0,0.45)" strokeWidth={0.5} />)
+  }
+  return (
+    <svg width={w + 2} height={length} viewBox={`0 0 ${w + 2} ${length}`} className="shrink-0" aria-hidden>
+      {faces}
+      {edges}
+    </svg>
+  )
+}
+
+/** Shared gradient for every LinkRun on the page. */
+export function ChainMetalDefs() {
+  return (
+    <svg width="0" height="0" className="absolute" aria-hidden>
+      <defs>
+        <linearGradient id="chain-metal" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stopColor="#1d2925" />
+          <stop offset=".3" stopColor="#9fc9b8" />
+          <stop offset=".48" stopColor="#effff7" />
+          <stop offset=".7" stopColor="#5f8a7b" />
+          <stop offset="1" stopColor="#1d2925" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+/** Each step hangs from the card as a tag on its own chain; past six, one "+N" tag stands for the rest. */
+export function HangingTags({ count, locked = false, open = true, active = 0, label }: { count: number; locked?: boolean; open?: boolean; active?: number; label?: string }) {
+  const shown = Math.min(count, 6)
+  const items = Array.from({ length: shown + (count > 6 ? 1 : 0) }, (_, i) => i)
+  return (
+    <div>
+      <div className="relative">
+        <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] rounded-full bg-[linear-gradient(to_bottom,#effff7,#9fc9b8_35%,#5f8a7b_65%,#1d2925)] shadow-[0_1px_2px_rgba(0,0,0,0.7)]" />
+        <ol className="relative flex gap-3 overflow-hidden px-2 pb-3 pt-0.5">
+          {items.map((i) => {
+            const more = i === 6
+            const final = more || i === count - 1
+            const hidden = locked && i > 0 && !more
+            const [closed, opened] = DROPS[i % DROPS.length]
+            return (
+              <li key={i} className="flex shrink-0 origin-top animate-[chain-tag-swing_2.6s_ease-in-out_infinite] flex-col items-center motion-reduce:animate-none" style={{ animationDelay: `${i * -0.45}s` }}>
+                <span className="flex justify-center overflow-hidden transition-[height] duration-500" style={{ height: open ? opened : closed }}>
+                  <LinkRun length={56} />
+                </span>
+                <span
+                  className={cn(
+                    'relative -mt-1 grid h-[58px] w-[46px] place-items-center overflow-hidden rounded-[10px_10px_14px_14px] border bg-[linear-gradient(160deg,color-mix(in_srgb,var(--color-primary)_8%,#1a1d1f),var(--color-card)_70%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_18px_-10px_rgba(0,0,0,0.7)]',
+                    hidden
+                      ? 'border-dashed border-white/[0.14] bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.03)_0_5px,transparent_5px_10px),var(--color-card)]'
+                      : final
+                        ? 'border-[color-mix(in_srgb,var(--color-primary)_60%,transparent)] shadow-[0_0_18px_-4px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
+                        : 'border-white/[0.12]',
+                    i === active && 'border-[color-mix(in_srgb,var(--color-primary)_70%,transparent)]',
+                  )}
+                >
+                  <span aria-hidden className="absolute left-1/2 top-[5px] size-2 -translate-x-1/2 rounded-full bg-background shadow-[inset_0_1px_1px_rgba(0,0,0,0.7),0_0_0_1.5px_#5f8a7b]" />
+                  <span className={cn('tabular mt-2.5 font-mono text-[14px] font-semibold', hidden ? 'text-white/50' : final ? 'text-primary' : 'text-white/80')}>
+                    {hidden ? <Lock className="size-3.5" /> : more ? `+${count - 6}` : String(i + 1).padStart(2, '0')}
+                  </span>
+                </span>
+              </li>
+            )
+          })}
+        </ol>
+      </div>
+      {label && (
+        <p className="flex h-9 min-w-0 items-center gap-2 rounded-[10px] border border-white/[0.07] bg-white/[0.02] px-3 text-[12.5px] text-white/60">
+          <span className="tabular font-mono text-[11px] font-semibold text-primary">{String(active + 1).padStart(2, '0')}</span>
+          <span className="min-w-0 flex-1 truncate">{label}</span>
+        </p>
       )}
     </div>
   )
 }
 
-function VideoCard() {
+export function ChainCard({
+  name = featuredChain.name,
+  description = featuredChain.description,
+  steps = featuredChain.steps.map((s) => s.title),
+  platforms = featuredChain.platforms,
+  locked = false,
+  expanded = false,
+  active = 0,
+  className,
+}: {
+  name?: string
+  description?: string
+  steps?: string[]
+  platforms?: string[]
+  locked?: boolean
+  expanded?: boolean
+  active?: number
+  className?: string
+}) {
   return (
-    <div className="flex min-h-0 flex-col rounded-2xl border border-white/[0.08] bg-card">
-      <div className="relative m-2 min-h-0 flex-1 overflow-hidden rounded-xl bg-gradient-to-br from-white/[0.07] via-black/50 to-black/80 ring-1 ring-white/10">
-        <MediaArt k="clockwork" className="absolute inset-0 opacity-80" />
-        <span className="absolute left-2.5 top-2.5 inline-flex h-5 items-center rounded-md border border-violet-400/40 bg-violet-500/15 px-1.5 text-[10px] font-medium text-violet-300">Video Gen</span>
-        <span className="absolute left-1/2 top-1/2 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/[0.15] bg-white/[0.06] backdrop-blur-sm">
-          <Play className="ml-0.5 size-5 fill-white text-white" />
-        </span>
-        <span className="absolute bottom-2.5 right-2.5 rounded border border-white/[0.15] bg-black/70 px-1.5 font-mono text-[10px] text-white/80">0:30</span>
+    <div
+      className={cn(
+        'relative flex h-full flex-col overflow-hidden rounded-xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_24px_-14px_rgba(0,0,0,0.7)]',
+        'bg-[radial-gradient(120%_70%_at_50%_0%,color-mix(in_srgb,var(--color-primary)_9%,var(--color-card))_0%,var(--color-card)_60%)]',
+        expanded ? 'border-[color-mix(in_srgb,var(--color-primary)_40%,transparent)]' : 'border-[color-mix(in_srgb,var(--color-primary)_16%,rgba(255,255,255,0.06))]',
+        className,
+      )}
+    >
+      <div className="px-5 pt-4">
+        <div className="mb-2.5 flex items-center gap-2">
+          <span className="tabular bg-gradient-to-b from-white to-white/45 bg-clip-text font-mono text-[26px] font-bold leading-none tracking-[-0.04em] text-transparent">{steps.length}</span>
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/80">
+            Steps {locked && <Lock className="size-2.5 text-white/55" />}
+          </span>
+        </div>
+        <div className="line-clamp-2 text-balance text-[16px] font-semibold leading-[1.3] tracking-[-0.01em] text-white/95">{name}</div>
+        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-white/50">{description}</p>
       </div>
-      <div className="px-4 pb-3 pt-1.5">
-        <div className="text-base font-semibold">Steampunk Clockwork, 30s One-Take</div>
-        <div className="mt-1 text-[12px] font-semibold uppercase tracking-wider text-white/40">Show prompt ⌄</div>
+      <div className="px-5 pb-3 pt-3.5">
+        <HangingTags count={steps.length} locked={locked} active={active} label={locked && active > 0 ? 'Locked until revealed' : steps[active]} />
+        {expanded && (
+          <ol className="relative mt-3 space-y-1">
+            <span aria-hidden className="absolute bottom-3 left-[11px] top-3 w-px bg-gradient-to-b from-primary/50 to-primary/10" />
+            {steps.map((s, i) => (
+              <li key={s} className="relative flex h-7 items-center gap-3">
+                <span className="tabular inline-grid size-6 shrink-0 place-items-center rounded-full border border-primary/45 bg-card font-mono text-[11px] font-semibold text-primary">{i + 1}</span>
+                <span className={cn('truncate text-[13px]', i === active ? 'text-white' : 'text-white/70')}>{s}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+      <div className="mt-auto flex min-h-12 items-center gap-1.5 border-t border-white/[0.05] py-2 pl-5 pr-3">
+        <PlatformChips names={platforms} max={4} named />
+        <span
+          className="inline-grid size-6 place-items-center rounded-md border"
+          style={{ background: 'linear-gradient(135deg, rgba(250,204,21,0.14) 0%, rgba(253,224,71,0.26) 52%, rgba(202,138,4,0.16) 100%)', borderColor: 'rgba(250,204,21,0.45)', color: '#fde68a' }}
+          title="Semi-Automated"
+        >
+          <MousePointerClick className="size-3" />
+        </span>
+        <span className="ml-auto grid size-7 place-items-center rounded-full text-white/50">
+          <ChevronDown className={cn('size-4', expanded && 'rotate-180')} />
+        </span>
+      </div>
+    </div>
+  )
+}
+
+export function ChainScreen({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="flex h-full">
+      {!compact && <Sidebar active="chains" />}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <Header />
+        <div className="relative min-h-0 flex-1 overflow-hidden p-6 [mask-image:linear-gradient(to_bottom,black_88%,transparent)]">
+          <div className="text-2xl font-bold tracking-tight">Prompt Chains</div>
+          <div className="mt-1 text-[13px] text-white/35">An ordered, runnable sequence. Every step shares one use case.</div>
+          <div className={cn('mt-5 grid items-start gap-4', compact ? 'grid-cols-2' : 'grid-cols-3')}>
+            <ChainCard expanded active={2} />
+            <ChainCard
+              name={otherChains[0].name}
+              description="Audit every screen for clarity and consistency, then rebuild the weakest ones as a polished system."
+              steps={['UX Heuristic Audit', 'Design Token Extraction', 'Component Inventory', 'Accessibility Pass', 'Motion & Micro-interactions', 'Visual QA']}
+              platforms={['Claude Design']}
+              locked
+              active={0}
+            />
+            {!compact && (
+              <ChainCard
+                name={otherChains[2].name}
+                description="From a one-line idea to a scroll-driven launch page with depth planes, deployed."
+                steps={['Positioning One-Pager', 'Hero Copy Rewriter', 'Depth-Plane Art Direction', 'Scroll-Driven Parallax Builder', 'Launch QA']}
+                platforms={['Vercel']}
+                active={3}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Motion Prompting (components/prompts/image-motion-view.tsx) ── */
+function MotionSwitch({ value }: { value: 'image' | 'video' }) {
+  return (
+    <div className="flex rounded-lg border border-white/[0.08] bg-white/[0.02] p-0.5">
+      {(
+        [
+          ['image', 'Image', ImageIcon],
+          ['video', 'Video', Video],
+        ] as const
+      ).map(([k, l, I]) => (
+        <span key={k} className={cn('flex h-8 items-center gap-1.5 rounded-md px-3 text-[12px] font-semibold', value === k ? 'bg-white/[0.07] text-white' : 'text-white/45')}>
+          <I className="size-3.5" /> {l}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function MediaCard({ p, className, favorite }: { p: SamplePrompt; className?: string; favorite?: boolean }) {
+  return (
+    <div className={cn('relative overflow-hidden rounded-2xl bg-black shadow-[0_14px_36px_-18px_rgba(0,0,0,0.85)] ring-1 ring-white/[0.08]', className)}>
+      <MediaArt k={p.art!} className="absolute inset-0" />
+      {p.kind === 'video' && (
+        <>
+          <span className="absolute left-1/2 top-[42%] grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/[0.15] bg-white/[0.06] backdrop-blur-sm">
+            <Play className="ml-0.5 size-4 fill-white text-white" />
+          </span>
+          <span className="absolute right-2.5 top-2.5 rounded border border-white/[0.15] bg-black/70 px-1.5 font-mono text-[10px] text-white/80">{p.duration}</span>
+        </>
+      )}
+      <span className="absolute left-2.5 top-2.5">
+        <ModelMarks model={p.model} size="sm" />
+      </span>
+      <div className="absolute inset-x-0 bottom-0 space-y-1.5 bg-gradient-to-t from-black/90 via-black/70 to-transparent px-3 pb-3 pt-10">
+        <div className="flex min-w-0 items-center gap-2">
+          <UseCaseBadge label={p.useCase} size="sm" overlay className="max-w-[45%] shrink-0" />
+          <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold tracking-tight text-white/95">{p.title}</span>
+          <FavoriteDot on={favorite} />
+        </div>
+        <div className="flex min-w-0 items-center gap-1">
+          {p.tags.slice(0, 2).map((t) => (
+            <TagChip key={t} tag={t} small />
+          ))}
+          <PlatformChips names={p.platforms} named className="ml-auto" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function MotionScreen({ compact = false }: { compact?: boolean }) {
+  const synth = promptById('synthwave')
+  const clock = promptById('clockwork')
+  const mug = promptById('mug')
+  const glass: SamplePrompt = { ...synth, id: 'glass', title: 'Glass App Icon', art: 'glassIcon', model: 'Image 2.5 Sunburst', tags: ['icon', 'glass'] }
+  return (
+    <div className="flex h-full">
+      {!compact && <Sidebar active="motion" />}
+      <div className="flex min-w-0 flex-1 flex-col gap-5 overflow-hidden p-6">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <div className="text-2xl font-bold tracking-tight">Motion Prompting</div>
+            <div className="mt-1 text-[13px] text-white/35">Image generation prompts, the picture, and the prompt behind it.</div>
+          </div>
+          <MotionSwitch value="image" />
+        </div>
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <SlidersHorizontal className="size-4" /> Filters <ChevronDown className="size-4" />
+          <span className="ml-3 flex gap-1.5">
+            {['Image Gen', 'Photo Editing'].map((u) => (
+              <UseCaseBadge key={u} label={u} size="sm" />
+            ))}
+          </span>
+        </div>
+        <div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-widest text-white/25">Landscape</span>
+            <span className="font-mono text-[10px] text-white/15">16:9</span>
+            <span className="text-[10px] text-white/20">· 3</span>
+          </div>
+          <div className="mt-3 grid h-[230px] grid-cols-[2.2fr_1fr] gap-3">
+            <MediaCard p={synth} favorite />
+            {!compact ? <MediaCard p={glass} /> : <MediaCard p={mug} />}
+          </div>
+        </div>
+        <div className="grid min-h-0 flex-1 grid-cols-[1fr_1.5fr] gap-3">
+          <MediaCard p={mug} />
+          <MediaCard p={clock} favorite />
+        </div>
       </div>
     </div>
   )

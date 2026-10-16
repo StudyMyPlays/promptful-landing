@@ -1,10 +1,12 @@
 /**
  * Marketing content, sourced from the Promptful product
- * (be-promptful: lib/constants.ts, lib/billing.ts, seeded chains).
+ * (be-promptful: lib/constants.ts, lib/billing.ts, lib/favorites/limits.ts,
+ * lib/defaults/default-platforms.ts, seeded chains).
  */
 
 export type UseCase = { label: string; glow: string }
 
+/** Every text use case, in the app's order (PROMPT_TYPES). */
 export const useCases: UseCase[] = [
   { label: 'Coding', glow: '#3b82f6' },
   { label: 'Sales & Marketing', glow: '#f97316' },
@@ -17,125 +19,164 @@ export const useCases: UseCase[] = [
   { label: 'UI/UX Design', glow: '#ec4899' },
   { label: 'Writing & Communication', glow: '#14b8a6' },
   { label: 'Legal & Compliance', glow: '#f59e0b' },
-  { label: 'Education & Learning', glow: '#84cc16' },
-  { label: 'Finance', glow: '#34d399' },
   { label: 'Video Editing', glow: '#fb7185' },
   { label: 'Household', glow: '#38bdf8' },
   { label: 'Business', glow: '#fdba74' },
   { label: 'Travel', glow: '#67e8f9' },
+  { label: 'Mobile App Development', glow: '#a78bfa' },
+  { label: 'Social Media', glow: '#e879f9' },
+  { label: 'DevOps & Infrastructure', glow: '#cbd5e1' },
+  { label: 'Payments & Billing', glow: '#86efac' },
+  { label: 'Product Management', glow: '#93c5fd' },
+  { label: 'Performance', glow: '#fde047' },
+  { label: 'Parallax Website', glow: '#6ee7b7' },
 ]
 
-export const glowFor = (label: string) => useCases.find((u) => u.label === label)?.glow ?? '#5cffb0'
+/** Image cards carry one of these instead (IMAGE_USE_CASES). */
+export const imageUseCases: UseCase[] = [
+  { label: 'Image Gen', glow: '#ec4899' },
+  { label: 'Photo Editing', glow: '#fbbf24' },
+]
 
-export type Tool = { label: string; logo: string; kind: 'harness' | 'model' | 'platform'; invert?: boolean }
+/** A video card's use case is its video type (VIDEO_TYPES). */
+export const videoTypes: UseCase[] = [
+  { label: 'Motion Graphics', glow: '#38bdf8' },
+  { label: 'UGC / Creator Content', glow: '#fb7185' },
+  { label: 'Animations', glow: '#c084fc' },
+  { label: '3D / CGI', glow: '#2dd4bf' },
+  { label: 'VFX / Experimental', glow: '#fb923c' },
+  { label: 'Product / E-commerce', glow: '#facc15' },
+]
+
+const allBadges = [...useCases, ...imageUseCases, ...videoTypes]
+export const glowFor = (label: string) => allBadges.find((u) => u.label === label)?.glow ?? '#5cffb0'
+
+export type Tool = { label: string; logo: string; kind: 'harness' | 'model' | 'platform'; color: string; invert?: boolean }
 
 export const harnesses: Tool[] = [
-  { label: 'Claude Code', logo: '/platforms/claude-color.webp', kind: 'harness' },
-  { label: 'Codex', logo: '/platforms/openai.webp', kind: 'harness' },
-  { label: 'ChatGPT Work', logo: '/platforms/openai.webp', kind: 'harness' },
-  { label: 'Perplexity Comet', logo: '/platforms/perplexity-color.webp', kind: 'harness' },
-  { label: 'Perplexity Computer', logo: '/platforms/perplexity-color.webp', kind: 'harness' },
-  { label: 'Claude Co-Work', logo: '/platforms/claude-color.webp', kind: 'harness' },
-  { label: 'Firecrawl Agent', logo: '/platforms/firecrawl.svg', kind: 'harness' },
-  { label: 'Higgsfield Supercomputer', logo: '/platforms/higgsfield.svg', kind: 'harness' },
+  { label: 'Claude Code', logo: '/platforms/claude-color.webp', kind: 'harness', color: '#C15F3C' },
+  { label: 'Codex', logo: '/platforms/openai.webp', kind: 'harness', color: '#10A37F' },
+  { label: 'ChatGPT Work', logo: '/platforms/openai.webp', kind: 'harness', color: '#10A37F' },
+  { label: 'Perplexity Comet', logo: '/platforms/perplexity-color.webp', kind: 'harness', color: '#20808D' },
+  { label: 'Perplexity Computer', logo: '/platforms/perplexity-color.webp', kind: 'harness', color: '#20808D' },
+  { label: 'Claude Co-Work', logo: '/platforms/claude-color.webp', kind: 'harness', color: '#C15F3C' },
+  { label: 'Firecrawl Agent', logo: '/platforms/firecrawl.svg', kind: 'harness', color: '#FF6B35' },
+  { label: 'Higgsfield Supercomputer', logo: '/platforms/higgsfield.svg', kind: 'harness', color: '#D946EF' },
 ]
 
 export const models: Tool[] = [
-  { label: 'Astra', logo: '/platforms/openai.webp', kind: 'model' },
-  { label: 'Fable 3.1', logo: '/platforms/claude-color.webp', kind: 'model' },
-  { label: 'Gemini 3.8', logo: '/platforms/gemini-color.svg', kind: 'model' },
-  { label: 'Deep Research', logo: '/platforms/perplexity-color.webp', kind: 'model' },
-  { label: 'GPT Image 2', logo: '/platforms/openai.webp', kind: 'model' },
-  { label: 'Nano Banana Pro', logo: '/platforms/gemini-color.svg', kind: 'model' },
-  { label: 'Runway Aleph 2', logo: '/platforms/runway.webp', kind: 'model', invert: true },
-  { label: 'Seedance 2.0', logo: '/platforms/seedance.webp', kind: 'model' },
+  { label: 'Astra', logo: '/platforms/openai.webp', kind: 'model', color: '#10A37F' },
+  { label: 'Fable 3.1', logo: '/platforms/claude-color.webp', kind: 'model', color: '#C15F3C' },
+  { label: 'Opus 5.5', logo: '/platforms/claude-color.webp', kind: 'model', color: '#C15F3C' },
+  { label: 'Gemini 3.8', logo: '/platforms/gemini-color.svg', kind: 'model', color: '#4285F4' },
+  { label: 'Deep Research', logo: '/platforms/perplexity-color.webp', kind: 'model', color: '#20808D' },
+  { label: 'BrowserUse', logo: '/platforms/perplexity-color.webp', kind: 'model', color: '#20808D' },
+  { label: 'Image 2.5 Flare', logo: '/platforms/openai.webp', kind: 'model', color: '#F97316' },
+  { label: 'Image 2.5 Sunburst', logo: '/platforms/gemini-color.svg', kind: 'model', color: '#FBBC04' },
+  { label: 'Seedance 2.5', logo: '/platforms/seedance.webp', kind: 'model', color: '#0EA5E9' },
 ]
 
+/** The platform directory a prompt can be built for (default-platforms.ts). */
 export const platforms: Tool[] = [
-  { label: 'Supabase', logo: '/platforms/supabase.webp', kind: 'platform' },
-  { label: 'Polar', logo: '/platforms/polar.svg', kind: 'platform' },
-  { label: 'Sentry', logo: '/platforms/sentry.svg', kind: 'platform' },
-  { label: 'PostHog', logo: '/platforms/posthog.svg', kind: 'platform' },
-  { label: 'Resend', logo: '/platforms/resend-icon-black.png', kind: 'platform', invert: true },
-  { label: 'YouTube', logo: '/platforms/youtube.svg', kind: 'platform' },
-  { label: 'TikTok', logo: '/platforms/tiktok.svg', kind: 'platform' },
-  { label: 'Instagram', logo: '/platforms/instagram.svg', kind: 'platform' },
-  { label: 'Reddit', logo: '/platforms/reddit.svg', kind: 'platform' },
+  { label: 'Supabase', logo: '/platforms/supabase.webp', kind: 'platform', color: '#34B27B' },
+  { label: 'Claude Design', logo: '/platforms/claude-color.webp', kind: 'platform', color: '#C15F3C' },
+  { label: 'Resend', logo: '/platforms/resend-icon-black.png', kind: 'platform', color: '#E11D48', invert: true },
+  { label: 'Swift', logo: '/platforms/apple.webp', kind: 'platform', color: '#F05138', invert: true },
+  { label: 'Polar', logo: '/platforms/polar.svg', kind: 'platform', color: '#0062FF' },
+  { label: 'Stripe', logo: '/platforms/stripe.svg', kind: 'platform', color: '#635BFF' },
+  { label: 'Vercel', logo: '/platforms/vercel.svg', kind: 'platform', color: '#FFFFFF', invert: true },
+  { label: 'GitHub', logo: '/platforms/github.svg', kind: 'platform', color: '#FFFFFF', invert: true },
+  { label: 'Expo', logo: '/platforms/expo.svg', kind: 'platform', color: '#FFFFFF', invert: true },
+  { label: 'Cloudflare', logo: '/platforms/cloudflare.svg', kind: 'platform', color: '#F38020' },
+  { label: 'Upstash', logo: '/platforms/upstash.svg', kind: 'platform', color: '#00E9A3' },
+  { label: 'Sentry', logo: '/platforms/sentry.svg', kind: 'platform', color: '#7553FF' },
+  { label: 'PostHog', logo: '/platforms/posthog.svg', kind: 'platform', color: '#F9BD2B' },
+  { label: 'Remotion', logo: '/platforms/remotion.png', kind: 'platform', color: '#0B84F3' },
+  { label: 'Hyperframes', logo: '/platforms/hyperframes.svg', kind: 'platform', color: '#A78BFA' },
+  { label: 'YouTube', logo: '/platforms/youtube.svg', kind: 'platform', color: '#FF0000' },
+  { label: 'TikTok', logo: '/platforms/tiktok.svg', kind: 'platform', color: '#FE2C55' },
+  { label: 'Instagram', logo: '/platforms/instagram.svg', kind: 'platform', color: '#E1306C' },
+  { label: 'Reddit', logo: '/platforms/reddit.svg', kind: 'platform', color: '#FF4500' },
+  { label: 'X', logo: '/platforms/x.svg', kind: 'platform', color: '#FFFFFF', invert: true },
 ]
 
-/** Brand colours per model / harness, as used by the app's logo chips (be-promptful lib/constants.ts). */
-export const modelMeta: Record<string, { logo: string; color: string; invert?: boolean }> = {
-  Astra: { logo: '/platforms/openai.webp', color: '#10A37F' },
-  'Fable 3.1': { logo: '/platforms/claude-color.webp', color: '#C15F3C' },
-  'Gemini 3.8': { logo: '/platforms/gemini-color.svg', color: '#4285F4' },
-  'Deep Research': { logo: '/platforms/perplexity-color.webp', color: '#20808D' },
-  'GPT Image 2': { logo: '/platforms/openai.webp', color: '#10A37F' },
-  'Nano Banana Pro': { logo: '/platforms/gemini-color.svg', color: '#FBBC04' },
-  'Runway Aleph 2': { logo: '/platforms/runway.webp', color: '#FFFFFF', invert: true },
-  'Seedance 2.0': { logo: '/platforms/seedance.webp', color: '#0EA5E9' },
-}
-
-export const harnessColor: Record<string, string> = {
-  'Claude Code': '#C15F3C',
-  'Claude Co-Work': '#C15F3C',
-  Codex: '#10A37F',
-  'ChatGPT Work': '#10A37F',
-  'Perplexity Comet': '#20808D',
-  'Perplexity Computer': '#20808D',
-  'Firecrawl Agent': '#FF6B35',
-  'Higgsfield Supercomputer': '#D946EF',
-}
+const byLabel = (list: Tool[]) => Object.fromEntries(list.map((t) => [t.label, t])) as Record<string, Tool>
+export const modelMeta = byLabel(models)
+export const harnessMeta = byLabel(harnesses)
+export const platformMeta = byLabel(platforms)
 
 export type SamplePrompt = {
+  id: string
   title: string
+  kind: 'text' | 'image' | 'video'
+  /** Text: a use case. Image: an image use case. Video: a video type. */
   useCase: string
-  harness: string
-  harnessLogo: string
+  harness?: string
   model: string
-  tags: string[]
-  runs: number
-  body: string[]
-  chain?: boolean
   /** Extra models beyond the lead one; the card shows a "+N" on the logo. */
   additionalModels?: string[]
+  platforms?: string[]
+  tags: string[]
+  runs: number
+  /** Your own copies, shown on the Most Used rail. */
+  yourRuns?: number
+  /** Markdown-ish lines: a leading "## " renders as a heading. */
+  body: string[]
+  chain?: boolean
+  /** Art key for image and video cards (components/mock/media-art). */
+  art?: 'synthwave' | 'clockwork' | 'glassIcon' | 'neonRain' | 'ceramicMug' | 'heroBanner'
+  duration?: string
 }
 
 export const samplePrompts: SamplePrompt[] = [
   {
+    id: 'code-review',
+    kind: 'text',
     title: 'Production Code Review for Bugs and Vulnerabilities',
     useCase: 'Coding',
     harness: 'Claude Code',
-    harnessLogo: '/platforms/claude-color.webp',
     model: 'Fable 3.1',
     additionalModels: ['Astra', 'Gemini 3.8'],
-    tags: ['review', 'security', 'bugs'],
+    platforms: ['GitHub', 'Supabase', 'Vercel'],
+    tags: ['review', 'security', 'bugs', 'pre-merge'],
     runs: 1284,
+    yourRuns: 9,
     chain: true,
     body: [
-      'You are a staff engineer doing a pre-merge review.',
-      'Read the diff end to end before commenting.',
+      '## Role',
+      'You are a staff engineer doing a pre-merge review of a production codebase.',
+      '## Process',
+      'Read the diff end to end before commenting. Trace every changed path to its callers.',
       'Rank findings by blast radius, not by line order.',
+      '## Output',
+      'A table of severity, file, failure scenario and fix. No praise. No nits unless they hide a bug.',
     ],
   },
   {
+    id: 'hooks',
+    kind: 'text',
     title: 'Viral Content Hook Strategist [Long-Form]',
     useCase: 'Content Creation',
     harness: 'ChatGPT Work',
-    harnessLogo: '/platforms/openai.webp',
     model: 'Astra',
+    platforms: ['YouTube'],
     tags: ['hooks', 'youtube', 'retention'],
     runs: 962,
+    yourRuns: 6,
     body: [
-      'Study the first 30 seconds of the top five videos.',
+      '## Task',
+      'Study the first 30 seconds of the top five videos in this niche.',
       'Name the tension each one opens, then withhold it.',
-      'Write ten hooks, each under twelve words.',
+      '## Output',
+      'Ten hooks, each under twelve words, ranked by curiosity gap.',
     ],
   },
   {
+    id: 'privacy',
+    kind: 'text',
     title: 'Privacy Policy Generation (GDPR & CCPA)',
     useCase: 'Legal & Compliance',
     harness: 'Claude Co-Work',
-    harnessLogo: '/platforms/claude-color.webp',
     model: 'Fable 3.1',
     tags: ['gdpr', 'ccpa', 'policy'],
     runs: 731,
@@ -146,11 +187,13 @@ export const samplePrompts: SamplePrompt[] = [
     ],
   },
   {
+    id: 'market',
+    kind: 'text',
     title: 'Comprehensive Market Researcher',
     useCase: 'Research',
     harness: 'Perplexity Comet',
-    harnessLogo: '/platforms/perplexity-color.webp',
     model: 'Deep Research',
+    additionalModels: ['BrowserUse'],
     tags: ['market', 'tam', 'sources'],
     runs: 655,
     chain: true,
@@ -161,41 +204,87 @@ export const samplePrompts: SamplePrompt[] = [
     ],
   },
   {
-    title: 'WCAG 2.1 AA Compliance Audit & Remediation',
-    useCase: 'UI/UX Design',
+    id: 'parallax',
+    kind: 'text',
+    title: 'Scroll-Driven Parallax Landing Page Builder',
+    useCase: 'Parallax Website',
     harness: 'Claude Code',
-    harnessLogo: '/platforms/claude-color.webp',
     model: 'Fable 3.1',
-    tags: ['a11y', 'wcag', 'audit'],
+    platforms: ['Vercel'],
+    tags: ['parallax', 'framer-motion', 'landing'],
     runs: 588,
-    chain: true,
+    yourRuns: 4,
     body: [
-      'Walk every route with a keyboard only.',
-      'Check contrast, focus order, names and live regions.',
-      'Fix in place, then list what still needs a human.',
+      '## Goal',
+      'Build a landing page whose sections move on separate depth planes.',
+      '## Rules',
+      'Sky, far ridge, near ridge, product. Each plane gets its own scroll rate.',
+      'Respect prefers-reduced-motion and keep every crest whole at any width.',
     ],
   },
   {
-    title: 'Short-Form Script Director',
-    useCase: 'Video Editing',
+    id: 'synthwave',
+    kind: 'image',
+    title: 'Retro Synthwave Skyline',
+    useCase: 'Image Gen',
     harness: 'Higgsfield Supercomputer',
-    harnessLogo: '/platforms/higgsfield.svg',
-    model: 'Seedance 2.0',
-    tags: ['tiktok', 'script', 'shots'],
+    model: 'Image 2.5 Flare',
+    tags: ['synthwave', 'retro', 'skyline'],
+    runs: 512,
+    yourRuns: 3,
+    art: 'synthwave',
+    body: ['A city skyline at dusk under a gridded mint horizon, 80s synthwave palette, film grain.'],
+  },
+  {
+    id: 'clockwork',
+    kind: 'video',
+    title: 'Steampunk Clockwork, 30s One-Take',
+    useCase: 'Motion Graphics',
+    model: 'Seedance 2.5',
+    platforms: ['Remotion'],
+    tags: ['steampunk', 'macro', 'one-take'],
     runs: 470,
-    body: [
-      'Open on motion, never on a face saying hello.',
-      'One idea per cut. Every cut earns the next.',
-      'Deliver a shot list with timings to the frame.',
-    ],
+    yourRuns: 2,
+    art: 'clockwork',
+    duration: '0:30',
+    body: ['Macro dolly through brass gears turning in low amber light, one continuous take.'],
+  },
+  {
+    id: 'mug',
+    kind: 'image',
+    title: 'Ceramic Mug Product Shot',
+    useCase: 'Photo Editing',
+    model: 'Image 2.5 Sunburst',
+    tags: ['product', 'studio'],
+    runs: 344,
+    art: 'ceramicMug',
+    body: ['Matte ceramic mug on wet stone, soft key light from the left, shallow depth of field.'],
   },
 ]
+
+export const promptById = (id: string) => samplePrompts.find((p) => p.id === id)!
+
+/** The account's favorites, in the order the carousel shows them. */
+export const favoriteIds = ['hooks', 'synthwave', 'code-review', 'clockwork', 'parallax'] as const
+/** The favorite the carousel opens on: the hero's main card. */
+export const featuredFavorite = 2
+
+/** "Because You Favorited" suggestions (lib/favorites/recommend.ts). */
+export const recommendations = [
+  { title: 'Pre-Launch QA & Security Audit Generator', because: 'Production Code Review for Bugs and Vulnerabilities', useCase: 'Security' },
+  { title: 'Short-Form Script Director', because: 'Viral Content Hook Strategist [Long-Form]', useCase: 'Social Media' },
+  { title: 'Frontend Performance Audit & Optimization', because: 'Scroll-Driven Parallax Landing Page Builder', useCase: 'Performance' },
+]
+
+/** Mirrors lib/favorites/limits.ts and public.favorite_limit(). */
+export const favoriteLimits = { free: 5, pro: 25 } as const
 
 export type Chain = {
   name: string
   description: string
   useCase: string
   harnesses: string[]
+  platforms: string[]
   automation: string
   steps: { title: string; note: string }[]
 }
@@ -206,6 +295,7 @@ export const featuredChain: Chain = {
     'Seven passes that take a working codebase to launch-ready: dead code, structure, naming and state first, then performance, a bug and vulnerability review, and a pre-launch QA and security sweep.',
   useCase: 'Coding',
   harnesses: ['Claude Code', 'Codex'],
+  platforms: ['GitHub', 'Vercel', 'Supabase'],
   automation: 'Semi-Automated',
   steps: [
     { title: 'Codebase Dead Code & Ghost Flow Auditor', note: 'Find what nothing calls, and flows that go nowhere.' },
@@ -221,6 +311,7 @@ export const featuredChain: Chain = {
 export const otherChains = [
   { name: 'UX Audit → Polished UI', useCase: 'UI/UX Design', steps: 6 },
   { name: 'Market → Positioning', useCase: 'Research', steps: 6 },
+  { name: 'Idea → Parallax Launch Page', useCase: 'Parallax Website', steps: 5 },
 ]
 
 export const pricing = {
@@ -232,7 +323,7 @@ export const pricing = {
     features: [
       'Browse the full text prompt library and every chain',
       'Reveal 14 prompts and 2 chains, yours to keep',
-      'Platforms and favorites',
+      `Platforms and up to ${favoriteLimits.free} favorites`,
     ],
     cta: 'Start for free',
   },
@@ -244,8 +335,8 @@ export const pricing = {
     billing: 'Billed monthly through Polar. Cancel any time.',
     features: [
       { title: 'Unlimited text prompts and chains', detail: 'No reveal limit, ever.' },
-      { title: 'The Image Prompt Library', detail: 'Every image prompt and the picture it made.', proOnly: true },
       { title: 'The Video Prompt Library', detail: 'Every motion prompt, the clip it produced, and the settings behind it.', proOnly: true },
+      { title: `${favoriteLimits.pro} favorites`, detail: 'A bigger shelf, with Because You Favorited suggestions.' },
       { title: 'The Knowledge Layer', detail: '2026 AI Tool Index + Weekly Trend Newsletter' },
       { title: 'First Access', detail: 'New prompt drops as they land' },
       { title: 'Cancel Any Time', detail: 'Keep Pro until the end of the period you paid for' },
@@ -271,7 +362,7 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
   General: [
     {
       q: 'What is Promptful?',
-      a: 'A curated library of production-ready prompts. Every prompt is written by hand, tagged with the use case it solves, the harness it runs in and the model it was tuned for, so you stop guessing and start from something that already works.',
+      a: 'A curated library of production-ready prompts. Every prompt is written by hand, tagged with the use case it solves, the harness it runs in, the model it was tuned for and the platforms it was built for, so you stop guessing and start from something that already works.',
     },
     {
       q: 'Who writes the prompts?',
@@ -285,7 +376,7 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
   'Plans & billing': [
     {
       q: 'What do I actually get for $20 a month?',
-      a: 'Every prompt and every chain, with no reveal limit, plus the image and video prompt libraries, with the picture or clip each one produced and the settings behind it. Free accounts browse the whole library and reveal 14 prompts and 2 chains of their choosing, and anything revealed stays theirs after upgrading.',
+      a: `Every prompt and every chain, with no reveal limit, plus the video prompt library with the clip each one produced and the settings behind it, and room for ${favoriteLimits.pro} favorites. Free accounts browse the whole library, keep ${favoriteLimits.free} favorites and reveal 14 prompts and 2 chains of their choosing, and anything revealed stays theirs after upgrading.`,
     },
     {
       q: 'Can I cancel my subscription?',
@@ -298,8 +389,12 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
   ],
   'The library': [
     {
+      q: 'How do favorites work?',
+      a: `Heart a prompt and it joins your Favorites: a carousel of your go-to cards, each one copy away, with Most Used, Most Recent and Because You Favorited suggestions beside it. Free keeps ${favoriteLimits.free}, Pro keeps ${favoriteLimits.pro}. Copy the same prompt twice and Promptful offers to keep it close.`,
+    },
+    {
       q: 'What is a prompt chain?',
-      a: 'An ordered, runnable sequence where every step shares one use case. Step through it with Back and Next, copy each prompt as you go, or copy the whole chain at once.',
+      a: 'An ordered, runnable sequence where every step shares one use case. Each step hangs from the chain card as its own tag; tap one to open that prompt, or open the card to see every step by name.',
     },
     {
       q: 'What happens when I reveal a prompt on Free?',
@@ -307,7 +402,7 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
     },
     {
       q: 'Which tools are the prompts written for?',
-      a: 'Harnesses like Claude Code, Codex, ChatGPT Work, Perplexity Comet and Higgsfield, and models like Fable 3.1, Gemini 3.8, GPT Image 2, Runway Aleph 2 and Seedance 2.0. Every card tells you which.',
+      a: 'Harnesses like Claude Code, Codex, ChatGPT Work, Perplexity Comet and Higgsfield, models like Fable 3.1, Opus 5.5, Gemini 3.8, Image 2.5 Flare and Seedance 2.5, and platforms from Supabase and Vercel to Remotion and TikTok. Every card tells you which.',
     },
   ],
 }

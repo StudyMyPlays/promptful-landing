@@ -1,19 +1,19 @@
 'use client'
 
 import { AnimatePresence, LayoutGroup, motion, useInView, useReducedMotion } from 'framer-motion'
-import { Image as ImageIcon, Library, Link2, ScanText } from 'lucide-react'
+import { Clapperboard, Heart, Library, Link2 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ScaleToFit } from '@/components/motion/interactive'
 import { Reveal, SplitReveal } from '@/components/motion/primitives'
-import { APP_H, APP_W, AppWindow, ChainScreen, DetailScreen, LibraryScreen, MediaScreen } from '@/components/mock/app'
+import { APP_H, APP_W, AppWindow, ChainScreen, FavoritesScreen, LibraryScreen, MotionScreen } from '@/components/mock/app'
 import { cn } from '@/lib/cn'
 import { useMediaQuery } from '@/lib/hooks'
 
 const tabs = [
-  { key: 'library', label: 'Library', Icon: Library, caption: 'Every prompt tagged by use case, harness, model and platform.', url: 'promptful.org', Screen: LibraryScreen },
-  { key: 'detail', label: 'Prompt detail', Icon: ScanText, caption: 'The full prompt, when to use it, and where it runs.', url: 'promptful.org/library', Screen: DetailScreen },
-  { key: 'chains', label: 'Chains', Icon: Link2, caption: 'Ordered steps you run one after another, or copy all at once.', url: 'promptful.org/chains', Screen: ChainScreen },
-  { key: 'media', label: 'Image & Video', Icon: ImageIcon, caption: 'Every media prompt ships with the output it made.', url: 'promptful.org/image', Screen: MediaScreen },
+  { key: 'library', label: 'Library', Icon: Library, caption: 'Every prompt tagged by use case, harness, model and the platforms it was built for.', url: 'promptful.org', Screen: LibraryScreen },
+  { key: 'favorites', label: 'Favorites', Icon: Heart, caption: 'Your go-to prompts in one carousel, with Most Used, Most Recent and Because You Favorited.', url: 'promptful.org/favorites', Screen: FavoritesScreen },
+  { key: 'chains', label: 'Chains', Icon: Link2, caption: 'Each step hangs from the card. Tap a tag to open that prompt, or open the card to see them all.', url: 'promptful.org/chains', Screen: ChainScreen },
+  { key: 'motion', label: 'Motion Prompting', Icon: Clapperboard, caption: 'Image and video prompts, each shown with the picture or clip it made.', url: 'promptful.org/motion', Screen: MotionScreen },
 ] as const
 
 const AUTO_MS = 6000
@@ -135,7 +135,7 @@ export function Showcase() {
             className="relative touch-pan-y"
             onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(true)}
             onPointerLeave={() => setHovered(false)}
-            drag="x"
+            drag={t.key === 'favorites' ? false : 'x'}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.12}
             dragSnapToOrigin

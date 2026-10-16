@@ -4,7 +4,7 @@ import { motion, useMotionValueEvent, useScroll, useSpring, useTransform, type M
 import { Check, Copy, Link2 } from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Reveal, SplitReveal } from '@/components/motion/primitives'
-import { UseCaseBadge } from '@/components/ui/brand'
+import { UseCaseBadge } from '@/components/mock/atoms'
 import { cn } from '@/lib/cn'
 import { featuredChain, glowFor, otherChains } from '@/lib/content'
 
@@ -30,10 +30,10 @@ function ChainMeta({ copied }: { copied: number }) {
       <div className="mr-2">
         <div className="text-[15px] font-semibold tracking-[-0.01em]">{featuredChain.name}</div>
         <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/40">
-          {featuredChain.harnesses.join(' · ')} · {featuredChain.automation}
+          {featuredChain.harnesses.join(' · ')} · {featuredChain.platforms.join(' · ')} · {featuredChain.automation}
         </div>
       </div>
-      <UseCaseBadge label={featuredChain.useCase} glow={glowFor(featuredChain.useCase)} />
+      <UseCaseBadge label={featuredChain.useCase} />
       <span className="tabular rounded-full border border-mint/30 bg-mint/[0.06] px-2.5 py-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-mint">
         {copied}/{steps.length} copied
       </span>
@@ -179,7 +179,7 @@ function OtherChainsCard() {
           </div>
         ))}
       </div>
-      <p className="text-[12.5px] text-white/40">Research, UX, legal and content. New chains ship with every drop.</p>
+      <p className="text-[12.5px] text-white/40">Research, UX, parallax sites and content. New chains ship with every drop.</p>
     </div>
   )
 }
