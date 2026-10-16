@@ -111,8 +111,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 1, ease: EASE, delay: 0.55 }}
         >
-          A hand-built library of tested prompts, chains and media prompts, each tagged with the tool it runs in and the model it was
-          tuned for. Heart the ones that work and keep them one copy away.
+          A hand-built AI prompt library of tested text, image and video prompts and prompt chains, each tagged with the tool it runs
+          in, from Claude Code to ChatGPT, and the model it was tuned for. Heart the ones that work and keep them one copy away.
         </motion.p>
         <motion.div
           className="mt-9 flex w-full max-w-[340px] flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center"

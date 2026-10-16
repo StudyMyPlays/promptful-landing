@@ -1,27 +1,30 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { SmoothScroll } from '@/components/motion/smooth-scroll'
-import { APP_URL } from '@/lib/site'
+import { SITE_URL, seo } from '@/lib/site'
 import './globals.css'
 
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans', display: 'swap' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' })
 
-const title = 'Promptful | Curated. Validated. Yours.'
-const description =
-  'A curated library of production-ready prompts, chains and image and video prompts, each tagged with the harness it runs in and the model it was tuned for. Heart your favorites, reveal 14 free.'
+const { title, description } = seo
 
 export const metadata: Metadata = {
-  metadataBase: new URL(APP_URL),
+  metadataBase: new URL(SITE_URL),
   title,
   description,
+  keywords: [...seo.keywords],
   applicationName: 'Promptful',
+  category: 'technology',
+  alternates: { canonical: '/' },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
   openGraph: {
     type: 'website',
     siteName: 'Be Promptful',
     title,
     description,
-    url: APP_URL,
+    url: '/',
+    locale: 'en_US',
   },
   twitter: { card: 'summary_large_image', title, description },
 }
