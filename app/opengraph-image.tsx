@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 
-export const alt = 'Be Promptful: Curated. Validated. Yours.'
+export const alt = 'Promptful, the AI prompt library: Curated. Validated. Yours.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -33,7 +33,7 @@ export default function OpengraphImage() {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: 14 }}>
-            {['17 USE CASES', 'PROMPT CHAINS', 'WEEKLY DROPS'].map((t) => (
+            {['22 USE CASES', 'PROMPT CHAINS', 'WEEKLY DROPS'].map((t) => (
               <div key={t} style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 999, padding: '10px 18px', fontSize: 16, letterSpacing: 3, color: 'rgba(245,247,250,0.7)' }}>
                 {t}
               </div>

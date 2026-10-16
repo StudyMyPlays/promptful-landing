@@ -12,10 +12,12 @@ import { Nav } from '@/components/sections/nav'
 import { Pricing } from '@/components/sections/pricing'
 import { RevealDemo } from '@/components/sections/reveal-demo'
 import { Showcase } from '@/components/sections/showcase'
+import { StructuredData } from '@/components/seo/structured-data'
 
 export default function Page() {
   return (
     <>
+      <StructuredData />
       <ChainMetalDefs />
       <Nav />
       <main id="main" className="relative">
