@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from 'react'
 import { ArtSlot, NightSky, Ridge } from '@/components/art/terrain'
 import { ScaleToFit } from '@/components/motion/interactive'
 import { EASE, Magnetic, SplitReveal } from '@/components/motion/primitives'
-import { APP_H, APP_W, AppWindow, FavoritesScreen } from '@/components/mock/app'
-import { PHONE_H, PHONE_W, PhoneFavorites } from '@/components/mock/mobile'
+import { APP_H, APP_W, AppWindow, LibraryScreen } from '@/components/mock/app'
+import { PHONE_H, PHONE_W, PhoneLibrary } from '@/components/mock/mobile'
 import { PremiumCta, StatusPill } from '@/components/ui/brand'
 import { assets, videos } from '@/lib/assets'
 import { useFinePointer } from '@/lib/hooks'
@@ -95,7 +95,7 @@ export function Hero() {
         style={still ? undefined : { y: copyY, opacity: copyOpacity, filter: copyBlur }}
       >
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>
-          <StatusPill>Your favorite prompts, one copy away</StatusPill>
+          <StatusPill>Every text prompt, free and unlimited</StatusPill>
         </motion.div>
         <SplitReveal
           as="h1"
@@ -112,7 +112,7 @@ export function Hero() {
           transition={{ duration: 1, ease: EASE, delay: 0.55 }}
         >
           A hand-built AI prompt library of tested text, image and video prompts and prompt chains, each tagged with the tool it runs
-          in, from Claude Code to ChatGPT, and the model it was tuned for. Heart the ones that work and keep them one copy away.
+          in, from Claude Code to ChatGPT, and the model it was tuned for. Find the one that fits and copy it.
         </motion.p>
         <motion.div
           className="mt-9 flex w-full max-w-[340px] flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center"
@@ -171,14 +171,14 @@ export function Hero() {
             />
             <div className="relative hidden md:block">
               <ScaleToFit width={APP_W} height={APP_H}>
-                <AppWindow url="promptful.org/favorites">
-                  <FavoritesScreen />
+                <AppWindow url="promptful.org">
+                  <LibraryScreen />
                 </AppWindow>
               </ScaleToFit>
             </div>
             <div className="relative mx-auto w-[min(88vw,380px)] md:hidden">
               <ScaleToFit width={PHONE_W} height={PHONE_H}>
-                <PhoneFavorites />
+                <PhoneLibrary />
               </ScaleToFit>
             </div>
           </motion.div>

@@ -29,10 +29,10 @@ export function FinalCta() {
       <div className="container-x relative z-20 flex flex-col items-center pb-[calc(var(--dune-h)*0.5+40px)] pt-[clamp(96px,12vw,160px)] text-center">
         <SplitReveal
           className="display-lg max-w-[820px] text-balance"
-          lines={[['Your next great prompt'], [{ text: 'is one reveal away.', className: 'text-mint-gradient pb-[0.14em]' }]]}
+          lines={[['Your next great prompt'], [{ text: 'is one copy away.', className: 'text-mint-gradient pb-[0.14em]' }]]}
         />
         <Reveal delay={0.15}>
-          <p className="lede mt-6 max-w-[480px]">Browse the whole library free. Reveal 14 prompts and 2 chains, keep them for good, and put your 5 favorites one copy away.</p>
+          <p className="lede mt-6 max-w-[480px]">Every text prompt is free and unlimited, no card needed. Upgrade to Pro for chains and the image and video libraries.</p>
         </Reveal>
         <Reveal delay={0.25} className="mt-9 flex w-full max-w-[340px] flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row">
           <Magnetic className="w-full sm:w-auto">

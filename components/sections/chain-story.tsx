@@ -179,7 +179,7 @@ function OtherChainsCard() {
           </div>
         ))}
       </div>
-      <p className="text-[12.5px] text-white/40">Research, UX, parallax sites and content. New chains ship with every drop.</p>
+      <p className="text-[12.5px] text-white/40">Research, UX, parallax sites and Multi-Media runs. Every chain is included with Pro.</p>
     </div>
   )
 }

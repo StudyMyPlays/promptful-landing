@@ -24,7 +24,6 @@ import {
   Image as ImageIcon,
   Layers,
   Lightbulb,
-  Lock,
   MessageSquare,
   Palette,
   Plane,
@@ -182,33 +181,15 @@ export function PlatformChips({ names = [], max = 3, named = false, className }:
   )
 }
 
-export function HeartGlyph({ filled = false, size = 13, className }: { filled?: boolean; size?: number; className?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
-      <path
-        d="M12 20.6c-.35 0-.69-.12-.96-.35-3.02-2.54-5.17-4.5-6.5-6.3C3.2 12.14 2.7 10.66 2.7 9.06 2.7 6.2 4.86 4 7.6 4c1.75 0 3.34.9 4.4 2.35C13.06 4.9 14.65 4 16.4 4c2.74 0 4.9 2.2 4.9 5.06 0 1.6-.5 3.08-1.84 4.89-1.33 1.8-3.48 3.76-6.5 6.3-.27.23-.61.35-.96.35Z"
-        fill={filled ? 'currentColor' : 'none'}
-        stroke={filled ? 'rgba(255,255,255,0.85)' : 'currentColor'}
-        strokeWidth={filled ? 1.4 : 1.7}
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
 const ICON_BTN = 'inline-grid size-7 shrink-0 place-items-center rounded-full border backdrop-blur-sm'
 const ICON_IDLE = 'border-white/[0.1] bg-black/40 text-white/55'
 
-export function FavoriteDot({ on = false }: { on?: boolean }) {
+export function CopyDot() {
   return (
-    <span className={cn(ICON_BTN, on ? 'border-red-500/40 bg-red-500/10 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.22)]' : ICON_IDLE)}>
-      <HeartGlyph filled={on} />
+    <span className={cn(ICON_BTN, ICON_IDLE)}>
+      <Copy className="size-[13px]" />
     </span>
   )
-}
-
-export function CopyDot({ locked = false }: { locked?: boolean }) {
-  return <span className={cn(ICON_BTN, ICON_IDLE)}>{locked ? <Lock className="size-[13px]" /> : <Copy className="size-[13px]" />}</span>
 }
 
 export function RunsBadge({ count, overlay }: { count: number; overlay?: boolean }) {

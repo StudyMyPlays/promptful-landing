@@ -1,19 +1,18 @@
 'use client'
 
 import { AnimatePresence, LayoutGroup, motion, useInView, useReducedMotion } from 'framer-motion'
-import { Clapperboard, Heart, Library, Link2 } from 'lucide-react'
+import { Clapperboard, Library, Link2 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ScaleToFit } from '@/components/motion/interactive'
 import { Reveal, SplitReveal } from '@/components/motion/primitives'
-import { APP_H, APP_W, AppWindow, ChainScreen, FavoritesScreen, LibraryScreen, MotionScreen } from '@/components/mock/app'
+import { APP_H, APP_W, AppWindow, ChainScreen, LibraryScreen, MotionScreen } from '@/components/mock/app'
 import { cn } from '@/lib/cn'
 import { useMediaQuery } from '@/lib/hooks'
 
 const tabs = [
   { key: 'library', label: 'Library', Icon: Library, caption: 'Every prompt tagged by use case, harness, model and the platforms it was built for.', url: 'promptful.org', Screen: LibraryScreen },
-  { key: 'favorites', label: 'Favorites', Icon: Heart, caption: 'Your go-to prompts in one carousel, with Most Used, Most Recent and Because You Favorited.', url: 'promptful.org/favorites', Screen: FavoritesScreen },
-  { key: 'chains', label: 'Chains', Icon: Link2, caption: 'Each step hangs from the card. Tap a tag to open that prompt, or open the card to see them all.', url: 'promptful.org/chains', Screen: ChainScreen },
-  { key: 'motion', label: 'Motion Prompting', Icon: Clapperboard, caption: 'Image and video prompts, each shown with the picture or clip it made.', url: 'promptful.org/motion', Screen: MotionScreen },
+  { key: 'chains', label: 'Chains', Icon: Link2, caption: 'Each step hangs from the card. Tap a tag to open that prompt, or open the card to step through them all. Included with Pro.', url: 'promptful.org/chains', Screen: ChainScreen },
+  { key: 'motion', label: 'Motion Prompting', Icon: Clapperboard, caption: 'Image and video prompts, each shown with the picture or clip it made. Included with Pro.', url: 'promptful.org/motion', Screen: MotionScreen },
 ] as const
 
 const AUTO_MS = 6000
@@ -135,7 +134,7 @@ export function Showcase() {
             className="relative touch-pan-y"
             onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(true)}
             onPointerLeave={() => setHovered(false)}
-            drag={t.key === 'favorites' ? false : 'x'}
+            drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.12}
             dragSnapToOrigin
