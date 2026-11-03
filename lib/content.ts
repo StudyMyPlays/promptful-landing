@@ -1,7 +1,7 @@
 /**
  * Marketing content, sourced from the Promptful product
- * (be-promptful: lib/constants.ts, lib/billing.ts, lib/favorites/limits.ts,
- * lib/defaults/default-platforms.ts, seeded chains).
+ * (be-promptful: lib/shared/constants.ts, lib/shared/billing.ts,
+ * components/pricing, lib/shared/defaults/default-platforms.ts, seeded chains).
  */
 
 export type UseCase = { label: string; glow: string }
@@ -48,7 +48,10 @@ export const videoTypes: UseCase[] = [
   { label: 'Product / E-commerce', glow: '#facc15' },
 ]
 
-const allBadges = [...useCases, ...imageUseCases, ...videoTypes]
+/** The use case only a chain takes, for chains that mix text, image and video steps (CHAIN_USE_CASES). */
+export const chainUseCases: UseCase[] = [{ label: 'Multi-Media', glow: '#bef264' }]
+
+const allBadges = [...useCases, ...imageUseCases, ...videoTypes, ...chainUseCases]
 export const glowFor = (label: string) => allBadges.find((u) => u.label === label)?.glow ?? '#5cffb0'
 
 export type Tool = { label: string; logo: string; kind: 'harness' | 'model' | 'platform'; color: string; invert?: boolean }
@@ -98,6 +101,9 @@ export const platforms: Tool[] = [
   { label: 'Instagram', logo: '/platforms/instagram.svg', kind: 'platform', color: '#E1306C' },
   { label: 'Reddit', logo: '/platforms/reddit.svg', kind: 'platform', color: '#FF4500' },
   { label: 'X', logo: '/platforms/x.svg', kind: 'platform', color: '#FFFFFF', invert: true },
+  { label: 'Cloudinary', logo: '/platforms/cloudinary.svg', kind: 'platform', color: '#3448C5' },
+  { label: 'GSAP', logo: '/platforms/gsap.svg', kind: 'platform', color: '#88CE02' },
+  { label: 'Three.js', logo: '/platforms/threejs.svg', kind: 'platform', color: '#FFFFFF', invert: true },
 ]
 
 const byLabel = (list: Tool[]) => Object.fromEntries(list.map((t) => [t.label, t])) as Record<string, Tool>
@@ -118,8 +124,6 @@ export type SamplePrompt = {
   platforms?: string[]
   tags: string[]
   runs: number
-  /** Your own copies, shown on the Most Used rail. */
-  yourRuns?: number
   /** Markdown-ish lines: a leading "## " renders as a heading. */
   body: string[]
   chain?: boolean
@@ -140,7 +144,6 @@ export const samplePrompts: SamplePrompt[] = [
     platforms: ['GitHub', 'Supabase', 'Vercel'],
     tags: ['review', 'security', 'bugs', 'pre-merge'],
     runs: 1284,
-    yourRuns: 9,
     chain: true,
     body: [
       '## Role',
@@ -162,7 +165,6 @@ export const samplePrompts: SamplePrompt[] = [
     platforms: ['YouTube'],
     tags: ['hooks', 'youtube', 'retention'],
     runs: 962,
-    yourRuns: 6,
     body: [
       '## Task',
       'Study the first 30 seconds of the top five videos in this niche.',
@@ -213,7 +215,6 @@ export const samplePrompts: SamplePrompt[] = [
     platforms: ['Vercel'],
     tags: ['parallax', 'framer-motion', 'landing'],
     runs: 588,
-    yourRuns: 4,
     body: [
       '## Goal',
       'Build a landing page whose sections move on separate depth planes.',
@@ -231,7 +232,6 @@ export const samplePrompts: SamplePrompt[] = [
     model: 'Image 2.5 Flare',
     tags: ['synthwave', 'retro', 'skyline'],
     runs: 512,
-    yourRuns: 3,
     art: 'synthwave',
     body: ['A city skyline at dusk under a gridded mint horizon, 80s synthwave palette, film grain.'],
   },
@@ -244,7 +244,6 @@ export const samplePrompts: SamplePrompt[] = [
     platforms: ['Remotion'],
     tags: ['steampunk', 'macro', 'one-take'],
     runs: 470,
-    yourRuns: 2,
     art: 'clockwork',
     duration: '0:30',
     body: ['Macro dolly through brass gears turning in low amber light, one continuous take.'],
@@ -263,21 +262,6 @@ export const samplePrompts: SamplePrompt[] = [
 ]
 
 export const promptById = (id: string) => samplePrompts.find((p) => p.id === id)!
-
-/** The account's favorites, in the order the carousel shows them. */
-export const favoriteIds = ['hooks', 'synthwave', 'code-review', 'clockwork', 'parallax'] as const
-/** The favorite the carousel opens on: the hero's main card. */
-export const featuredFavorite = 2
-
-/** "Because You Favorited" suggestions (lib/favorites/recommend.ts). */
-export const recommendations = [
-  { title: 'Pre-Launch QA & Security Audit Generator', because: 'Production Code Review for Bugs and Vulnerabilities', useCase: 'Security' },
-  { title: 'Short-Form Script Director', because: 'Viral Content Hook Strategist [Long-Form]', useCase: 'Social Media' },
-  { title: 'Frontend Performance Audit & Optimization', because: 'Scroll-Driven Parallax Landing Page Builder', useCase: 'Performance' },
-]
-
-/** Mirrors lib/favorites/limits.ts and public.favorite_limit(). */
-export const favoriteLimits = { free: 5, pro: 25 } as const
 
 export type Chain = {
   name: string
@@ -312,6 +296,7 @@ export const otherChains = [
   { name: 'UX Audit → Polished UI', useCase: 'UI/UX Design', steps: 6 },
   { name: 'Market → Positioning', useCase: 'Research', steps: 6 },
   { name: 'Idea → Parallax Launch Page', useCase: 'Parallax Website', steps: 5 },
+  { name: 'Product Shot → Launch Clip', useCase: 'Multi-Media', steps: 4 },
 ]
 
 export const pricing = {
@@ -319,11 +304,11 @@ export const pricing = {
     name: 'Free',
     price: '$0',
     cadence: '/ permanent',
-    tagline: 'Reveal 14 text prompts and 2 chains from the library. Yours to keep.',
+    tagline: 'Every text prompt in the library, open and unlimited.',
     features: [
-      'Browse the full text prompt library and every chain',
-      'Reveal 14 prompts and 2 chains, yours to keep',
-      `Platforms and up to ${favoriteLimits.free} favorites`,
+      'The full text prompt library, open and unlimited',
+      'Copy any text prompt, no reveal limit',
+      'The platform directory',
     ],
     cta: 'Start for free',
   },
@@ -334,9 +319,8 @@ export const pricing = {
     tagline: 'For power users, creators, and developers needing production-ready scale.',
     billing: 'Billed monthly through Polar. Cancel any time.',
     features: [
-      { title: 'Unlimited text prompts and chains', detail: 'No reveal limit, ever.' },
-      { title: 'The Video Prompt Library', detail: 'Every motion prompt, the clip it produced, and the settings behind it.', proOnly: true },
-      { title: `${favoriteLimits.pro} favorites`, detail: 'A bigger shelf, with Because You Favorited suggestions.' },
+      { title: 'Prompt Chains', detail: 'Every text, image and multi-media chain, run step by step.', proOnly: true },
+      { title: 'The Image & Video Prompt Libraries', detail: 'Every image and motion prompt, the result it produced, and the settings behind it.', proOnly: true },
       { title: 'The Knowledge Layer', detail: '2026 AI Tool Index + Weekly Trend Newsletter' },
       { title: 'First Access', detail: 'New prompt drops as they land' },
       { title: 'Cancel Any Time', detail: 'Keep Pro until the end of the period you paid for' },
@@ -375,30 +359,22 @@ export const faqs: Record<'General' | 'Plans & billing' | 'The library', Faq[]> 
   ],
   'Plans & billing': [
     {
-      q: 'What do I actually get for $20 a month?',
-      a: `Every prompt and every chain, with no reveal limit, plus the video prompt library with the clip each one produced and the settings behind it, and room for ${favoriteLimits.pro} favorites. Free accounts browse the whole library, keep ${favoriteLimits.free} favorites and reveal 14 prompts and 2 chains of their choosing, and anything revealed stays theirs after upgrading.`,
+      q: 'What do I get with Pro?',
+      a: 'Everything in Free, plus every prompt chain: multi-step sequences you run in order to take a task from start to finish. You also get the full image and video prompt libraries, each prompt shown with the picture or clip it actually produced and the settings behind it, so you see the result before you spend a single generation.',
     },
     {
-      q: 'Can I cancel my subscription?',
-      a: 'Yes. Cancel any time from your billing portal. You keep Pro until the end of the period you paid for, and everything you revealed stays yours.',
+      q: 'Can I try it before I pay?',
+      a: 'Yes. The Free plan opens every text prompt in the library, with no limit and no card. Upgrade when you want chains, images and video.',
     },
     {
-      q: 'How is billing handled?',
-      a: 'Securely through Polar. Pro is billed monthly; there are no hidden fees and no annual lock-in.',
+      q: 'Can I cancel any time?',
+      a: 'Yes. Cancel from Settings in a couple of clicks. There is no contract and no cancellation fee, and you keep Pro until the end of the period you already paid for. Checkout and billing run through Polar, so your card details never touch our servers.',
     },
   ],
   'The library': [
     {
-      q: 'How do favorites work?',
-      a: `Heart a prompt and it joins your Favorites: a carousel of your go-to cards, each one copy away, with Most Used, Most Recent and Because You Favorited suggestions beside it. Free keeps ${favoriteLimits.free}, Pro keeps ${favoriteLimits.pro}. Copy the same prompt twice and Promptful offers to keep it close.`,
-    },
-    {
       q: 'What is a prompt chain?',
-      a: 'An ordered, runnable sequence where every step shares one use case. Each step hangs from the chain card as its own tag; tap one to open that prompt, or open the card to see every step by name.',
-    },
-    {
-      q: 'What happens when I reveal a prompt on Free?',
-      a: 'Press and hold to reveal. It uses one of your 14 free reveals, and once revealed it stays yours for good, even if you never upgrade.',
+      a: 'An ordered, runnable sequence of prompts, each step building on the last. Each step hangs from the chain card as its own tag; tap one to open that prompt, or open the card to step through them all. Multi-Media chains mix text, image and video steps in one run. Chains are part of Pro.',
     },
     {
       q: 'Which tools are the prompts written for?',
