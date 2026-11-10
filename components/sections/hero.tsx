@@ -25,7 +25,6 @@ export function Hero() {
   const nearY = useTransform(p, [0, 1], ['0%', '-8%'])
   const copyY = useTransform(p, [0, 0.5], [0, -90])
   const copyOpacity = useTransform(p, [0, 0.38], [1, 0])
-  const copyBlur = useTransform(p, [0, 0.38], ['blur(0px)', 'blur(10px)'])
   const mockRotate = useTransform(p, [0, 0.45], [24, 0])
   const mockScale = useTransform(p, [0, 0.45], [0.9, 1])
   const mockY = useTransform(p, [0, 0.6], [0, -40])
@@ -92,7 +91,7 @@ export function Hero() {
       {/* Copy */}
       <motion.div
         className="container-x relative z-10 flex flex-col items-center pt-[clamp(120px,17vh,190px)] text-center"
-        style={still ? undefined : { y: copyY, opacity: copyOpacity, filter: copyBlur }}
+        style={still ? undefined : { y: copyY, opacity: copyOpacity }}
       >
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>
           <StatusPill>Every text prompt, free and unlimited</StatusPill>

@@ -16,6 +16,12 @@ export function Faq() {
   const [cat, setCat] = useState<Cat>('General')
   const [open, setOpen] = useState<number | null>(0)
   const uid = useId()
+  const tabId = (c: Cat) => `${uid}-tab-${cats.indexOf(c)}`
+  const panelId = `${uid}-panel`
+  const choose = (c: Cat) => {
+    setCat(c)
+    setOpen(0)
+  }
 
   return (
     <section id="faq" className="relative py-[clamp(96px,13vw,180px)]">
@@ -40,19 +46,30 @@ export function Faq() {
         <div>
           <Reveal>
             <LayoutGroup id="faq-tabs">
-              <div role="tablist" aria-label="FAQ categories" className="scrollbar-hide -mx-1 flex gap-1 overflow-x-auto px-1">
+              <div
+                role="tablist"
+                aria-label="FAQ categories"
+                className="scrollbar-hide -mx-1 flex gap-1 overflow-x-auto px-1"
+                onKeyDown={(e) => {
+                  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+                  e.preventDefault()
+                  const next = cats[(cats.indexOf(cat) + (e.key === 'ArrowRight' ? 1 : -1) + cats.length) % cats.length]
+                  choose(next)
+                  document.getElementById(tabId(next))?.focus()
+                }}
+              >
                 {cats.map((c) => (
                   <button
                     key={c}
+                    id={tabId(c)}
                     type="button"
                     role="tab"
                     aria-selected={c === cat}
-                    onClick={() => {
-                      setCat(c)
-                      setOpen(0)
-                    }}
+                    aria-controls={panelId}
+                    tabIndex={c === cat ? 0 : -1}
+                    onClick={() => choose(c)}
                     className={cn(
-                      'relative shrink-0 rounded-full px-4 py-2 text-[13.5px] font-medium transition-colors',
+                      'relative min-h-11 shrink-0 rounded-full px-4 py-2 text-[13.5px] font-medium transition-colors sm:min-h-0',
                       c === cat ? 'text-white' : 'text-white/45 hover:text-white/75',
                     )}
                   >
@@ -68,7 +85,16 @@ export function Faq() {
 
           <div className="mt-6 border-t border-white/[0.07]">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.div key={cat} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }}>
+              <motion.div
+                key={cat}
+                id={panelId}
+                role="tabpanel"
+                aria-labelledby={tabId(cat)}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4, transition: { duration: 0.12, ease: EASE } }}
+                transition={{ duration: 0.22, ease: EASE }}
+              >
                 {faqs[cat].map((f, i) => {
                   const isOpen = open === i
                   const id = `${uid}-${cat}-${i}`
@@ -96,7 +122,7 @@ export function Faq() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.45, ease: EASE }}
+                            transition={{ duration: 0.3, ease: EASE }}
                             className="overflow-hidden"
                           >
                             <p className="pb-6 pr-12 text-[14.5px] leading-relaxed text-white/55">{f.a}</p>
