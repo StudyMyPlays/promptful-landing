@@ -103,7 +103,7 @@ function PinnedChain() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const p = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.35 })
   const x = useTransform(p, [0.05, 0.95], [0, -distance])
-  const rail = useTransform(p, [0.05, 0.95], ['0%', '100%'])
+  const rail = useTransform(p, [0.05, 0.95], [0, 1])
   const [copied, setCopied] = useState(0)
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     const k = Math.round(((v - 0.05) / 0.9) * steps.length)
@@ -156,11 +156,14 @@ function PinnedChain() {
   )
 }
 
-function Rail({ progress }: { progress: MotionValue<string> }) {
+/** Progress is a 0–1 scale on the compositor (no per-frame layout); the head dot rides a matching translate. */
+function Rail({ progress }: { progress: MotionValue<number> }) {
+  const head = useTransform(progress, (v) => `${v * 100}%`)
   return (
     <div className="absolute inset-x-0 top-0 h-px bg-white/[0.07]">
-      <motion.div className="relative h-full bg-mint shadow-[0_0_12px_rgba(92,255,176,.9)]" style={{ width: progress }}>
-        <span className="absolute -right-1 -top-[3px] size-[7px] rounded-full bg-mint shadow-[0_0_12px_3px_rgba(92,255,176,.7)]" />
+      <motion.div className="h-full origin-left bg-mint shadow-[0_0_12px_rgba(92,255,176,.9)]" style={{ scaleX: progress }} />
+      <motion.div className="absolute inset-0" style={{ x: head }} aria-hidden>
+        <span className="absolute -left-1 -top-[3px] size-[7px] rounded-full bg-mint shadow-[0_0_12px_3px_rgba(92,255,176,.7)]" />
       </motion.div>
     </div>
   )
@@ -188,7 +191,6 @@ function OtherChainsCard() {
 function StackedChain() {
   const ref = useRef<HTMLOListElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.7', 'end 0.6'] })
-  const rail = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
   const [copied, setCopied] = useState(0)
   useMotionValueEvent(scrollYProgress, 'change', (v) => setCopied(Math.max(0, Math.min(steps.length, Math.round(v * steps.length)))))
   return (
@@ -202,7 +204,7 @@ function StackedChain() {
       </div>
       <ol ref={ref} className="relative mt-8 space-y-3 pl-8">
         <span className="absolute bottom-4 left-[11px] top-4 w-px bg-white/[0.07]" aria-hidden>
-          <motion.span className="block w-full bg-mint shadow-[0_0_10px_rgba(92,255,176,.8)]" style={{ height: rail }} />
+          <motion.span className="block h-full w-full origin-top bg-mint shadow-[0_0_10px_rgba(92,255,176,.8)]" style={{ scaleY: scrollYProgress }} />
         </span>
         {steps.map((s, i) => (
           <li key={s.title} className="relative">

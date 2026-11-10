@@ -92,7 +92,7 @@ export function Showcase() {
                   tabIndex={k === i ? 0 : -1}
                   onClick={() => select(k)}
                   className={cn(
-                    'relative flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-medium transition-colors duration-200 active:scale-[0.97]',
+                    'relative flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[13.5px] sm:min-h-0 font-medium transition-colors duration-200 active:scale-[0.97]',
                     k === i ? 'text-white' : 'text-white/50 hover:text-white/80',
                   )}
                 >

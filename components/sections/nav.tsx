@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { scrollToTarget, useLenis } from '@/components/motion/smooth-scroll'
 import { EASE } from '@/components/motion/primitives'
 import { PremiumCta, Wordmark } from '@/components/ui/brand'
@@ -17,6 +17,9 @@ export function Nav() {
   const [active, setActive] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
   const lenis = useLenis()
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const wasOpen = useRef(false)
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     const prev = scrollY.getPrevious() ?? 0
@@ -48,6 +51,17 @@ export function Nav() {
     return () => window.removeEventListener('keydown', onKey)
   }, [open, lenis])
 
+  // While the full-screen menu is open, the page behind it is inert (no Tab or screen-reader access);
+  // focus moves into the menu and returns to the toggle when it closes.
+  useEffect(() => {
+    const behind = [document.getElementById('main'), document.querySelector('footer')].filter(Boolean) as HTMLElement[]
+    behind.forEach((el) => (el.inert = open))
+    if (open) menuRef.current?.querySelector<HTMLElement>('a')?.focus({ preventScroll: true })
+    else if (wasOpen.current) toggleRef.current?.focus({ preventScroll: true })
+    wasOpen.current = open
+    return () => behind.forEach((el) => (el.inert = false))
+  }, [open])
+
   const go = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault()
     setOpen(false)
@@ -60,7 +74,7 @@ export function Nav() {
       <motion.header
         className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:px-5 sm:pt-4"
         animate={{ y: hidden ? -96 : 0 }}
-        transition={{ duration: 0.45, ease: EASE }}
+        transition={{ duration: 0.3, ease: EASE }}
       >
         <div
           className={cn(
@@ -104,16 +118,17 @@ export function Nav() {
             >
               Log in
             </Link>
-            <PremiumCta href={links.signup} size="sm" className="hidden sm:inline-flex">
+            <PremiumCta href={links.signup} size="sm" className="hidden min-h-11 sm:inline-flex sm:min-h-0">
               Get started
             </PremiumCta>
             <button
+              ref={toggleRef}
               type="button"
               onClick={() => setOpen((o) => !o)}
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? 'Close menu' : 'Open menu'}
-              className="grid size-10 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/80 lg:hidden"
+              className="grid size-11 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/80 lg:hidden"
             >
               {open ? <X className="size-[18px]" /> : <Menu className="size-[18px]" />}
             </button>
@@ -124,12 +139,13 @@ export function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={menuRef}
             id="mobile-menu"
             className="fixed inset-0 z-40 flex flex-col bg-[#020304]/[0.97] px-6 pb-8 pt-28 backdrop-blur-xl lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: EASE }}
+            exit={{ opacity: 0, transition: { duration: 0.15, ease: EASE } }}
+            transition={{ duration: 0.2, ease: EASE }}
           >
             <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" />
             <nav aria-label="Mobile" className="relative flex flex-col">
@@ -138,9 +154,9 @@ export function Nav() {
                   key={l.id}
                   href={l.href}
                   onClick={go(l.href)}
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + i * 0.05, duration: 0.6, ease: EASE }}
+                  transition={{ delay: 0.03 + i * 0.04, duration: 0.28, ease: EASE }}
                   className="flex items-baseline gap-4 border-b border-white/[0.06] py-5 text-[30px] font-bold tracking-[-0.03em] text-white/90"
                 >
                   <span className="font-mono text-[11px] font-semibold tracking-[0.12em] text-mint/60">0{i + 1}</span>
@@ -150,9 +166,9 @@ export function Nav() {
             </nav>
             <motion.div
               className="relative mt-auto flex flex-col gap-3"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.6, ease: EASE }}
+              transition={{ delay: 0.15, duration: 0.28, ease: EASE }}
             >
               <PremiumCta href={links.signup} size="lg" className="w-full">
                 Get started free
